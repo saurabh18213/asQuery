@@ -26,8 +26,8 @@ CREATE TABLE `Answer` (
   `answer_id` int(11) NOT NULL AUTO_INCREMENT,
   `upvotes` int(11) DEFAULT '0',
   `downvotes` int(11) DEFAULT '0',
-  `answered_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `content` blob,
+  `answered_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `content` text,
   `is_solution` int(11) DEFAULT '0',
   `question_id` int(11) NOT NULL,
   `userid` int(11) NOT NULL,
@@ -49,30 +49,31 @@ LOCK TABLES `Answer` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `Answer_Upvotes`
+-- Table structure for table `Answer_votes`
 --
 
-DROP TABLE IF EXISTS `Answer_Upvotes`;
+DROP TABLE IF EXISTS `Answer_votes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
-CREATE TABLE `Answer_Upvotes` (
+CREATE TABLE `Answer_votes` (
   `question_id` int(11) NOT NULL,
   `answer_id` int(11) NOT NULL,
   `userid` int(11) NOT NULL,
+  `type` int(11) NOT NULL,
   PRIMARY KEY (`question_id`,`answer_id`,`userid`),
   KEY `userid` (`userid`),
-  CONSTRAINT `Answer_Upvotes_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `Question` (`question_id`),
-  CONSTRAINT `Answer_Upvotes_ibfk_2` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`)
+  CONSTRAINT `Answer_votes_ibfk_1` FOREIGN KEY (`question_id`, `answer_id`) REFERENCES `Answer` (`question_id`, `answer_id`),
+  CONSTRAINT `Answer_votes_ibfk_2` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `Answer_Upvotes`
+-- Dumping data for table `Answer_votes`
 --
 
-LOCK TABLES `Answer_Upvotes` WRITE;
-/*!40000 ALTER TABLE `Answer_Upvotes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Answer_Upvotes` ENABLE KEYS */;
+LOCK TABLES `Answer_votes` WRITE;
+/*!40000 ALTER TABLE `Answer_votes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Answer_votes` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -111,8 +112,8 @@ CREATE TABLE `Question` (
   `status` int(11) DEFAULT NULL,
   `upvotes` int(11) DEFAULT '0',
   `downvotes` int(11) DEFAULT '0',
-  `asked_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `content` blob,
+  `asked_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `content` text,
   `userid` int(11) NOT NULL,
   PRIMARY KEY (`question_id`),
   KEY `userid` (`userid`),
@@ -130,29 +131,30 @@ LOCK TABLES `Question` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `Question_Upvotes`
+-- Table structure for table `Question_votes`
 --
 
-DROP TABLE IF EXISTS `Question_Upvotes`;
+DROP TABLE IF EXISTS `Question_votes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
-CREATE TABLE `Question_Upvotes` (
+CREATE TABLE `Question_votes` (
   `question_id` int(11) NOT NULL,
   `userid` int(11) NOT NULL,
+  `type` int(11) NOT NULL,
   PRIMARY KEY (`question_id`,`userid`),
   KEY `userid` (`userid`),
-  CONSTRAINT `Question_Upvotes_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `Question` (`question_id`) ON DELETE CASCADE,
-  CONSTRAINT `Question_Upvotes_ibfk_2` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`)
+  CONSTRAINT `Question_votes_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `Question` (`question_id`) ON DELETE CASCADE,
+  CONSTRAINT `Question_votes_ibfk_2` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `Question_Upvotes`
+-- Dumping data for table `Question_votes`
 --
 
-LOCK TABLES `Question_Upvotes` WRITE;
-/*!40000 ALTER TABLE `Question_Upvotes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Question_Upvotes` ENABLE KEYS */;
+LOCK TABLES `Question_votes` WRITE;
+/*!40000 ALTER TABLE `Question_votes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Question_votes` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -244,7 +246,7 @@ CREATE TABLE `User` (
   `userid` int(11) NOT NULL AUTO_INCREMENT,
   `reputation` int(11) DEFAULT '0',
   `user_since` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`email`),
+  PRIMARY KEY (`userid`),
   UNIQUE KEY `userid` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -267,4 +269,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-08  2:17:58
+-- Dump completed on 2019-05-09 19:33:14
