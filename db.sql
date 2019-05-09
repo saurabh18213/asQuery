@@ -107,7 +107,7 @@ DROP TABLE IF EXISTS `Question`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `Question` (
-  `question_id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL AUTO_INCREMENT,
   `status` int(11) DEFAULT NULL,
   `upvotes` int(11) DEFAULT '0',
   `downvotes` int(11) DEFAULT '0',

@@ -14,7 +14,7 @@ def index():
     cur.execute("Select * from User")
     rv = cur.fetchall()
     print(rv)
-    return render_template('base.html')
+    return render_template('home.html')
 
 @app.route('/question')
 def question():
