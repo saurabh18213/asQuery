@@ -23,16 +23,17 @@ DROP TABLE IF EXISTS `Answer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `Answer` (
-  `answer_id` int(11) NOT NULL,
+  `answer_id` int(11) NOT NULL AUTO_INCREMENT,
   `upvotes` int(11) DEFAULT '0',
   `downvotes` int(11) DEFAULT '0',
-  `answered_at` timestamp NULL DEFAULT NULL,
+  `answered_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `content` blob,
   `is_solution` int(11) DEFAULT '0',
   `question_id` int(11) NOT NULL,
   `userid` int(11) NOT NULL,
   PRIMARY KEY (`question_id`,`answer_id`),
   KEY `userid` (`userid`),
+  KEY `answer_id` (`answer_id`),
   CONSTRAINT `Answer_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `Question` (`question_id`) ON DELETE CASCADE,
   CONSTRAINT `Answer_ibfk_2` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -82,10 +83,10 @@ DROP TABLE IF EXISTS `Moderator`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `Moderator` (
-  `email` varchar(40) NOT NULL,
+  `userid` int(11) NOT NULL,
   `moderator_since` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`email`),
-  CONSTRAINT `Moderator_ibfk_1` FOREIGN KEY (`email`) REFERENCES `User` (`email`)
+  PRIMARY KEY (`userid`),
+  CONSTRAINT `Moderator_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -110,7 +111,7 @@ CREATE TABLE `Question` (
   `status` int(11) DEFAULT NULL,
   `upvotes` int(11) DEFAULT '0',
   `downvotes` int(11) DEFAULT '0',
-  `asked_at` timestamp NULL DEFAULT NULL,
+  `asked_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `content` blob,
   `userid` int(11) NOT NULL,
   PRIMARY KEY (`question_id`),
@@ -162,7 +163,7 @@ DROP TABLE IF EXISTS `Tag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `Tag` (
-  `Tagname` char(10) NOT NULL,
+  `Tagname` char(30) NOT NULL,
   `question_count` int(11) DEFAULT '0',
   PRIMARY KEY (`Tagname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -239,8 +240,8 @@ DROP TABLE IF EXISTS `User`;
 CREATE TABLE `User` (
   `email` varchar(40) NOT NULL,
   `password` varchar(40) NOT NULL,
-  `username` varchar(20) DEFAULT NULL,
-  `userid` int(11) DEFAULT NULL,
+  `username` varchar(20) NOT NULL,
+  `userid` int(11) NOT NULL AUTO_INCREMENT,
   `reputation` int(11) DEFAULT '0',
   `user_since` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`email`),
