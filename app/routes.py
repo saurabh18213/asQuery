@@ -11,10 +11,14 @@ mysql = MySQL(app)
 @app.route('/')
 def index():
     cur = mysql.connection.cursor()
-    cur.execute("Select * from User")
-    rv = cur.fetchall()
-    print(rv)
-    return render_template('home.html')
+    cur.execute('''select Q.question_id, Q.status, 
+    Q.upvotes, Q.downvotes, Q.asked_at, Q.content,  
+    (select count(*) from Answer A where A.question_id = Q.question_id)
+    as answer_count, ( select U.username from User U where U.userid = Q.userid) 
+    as username from Question Q;''')
+    questions = cur.fetchall()
+    print(questions)
+    return render_template('home.html', questions=questions)
 
 @app.route('/question')
 def question():

@@ -36,14 +36,17 @@
   <div class="center-area">
 
     <div class="sidebar">
+        {% block leftSidebar %}
         <a href="#">Option</a> <br>
         <a href="#">Option</a> <br>
         <a href="#">Option</a> <br>
         <a href="#">Option</a> <br>
         <a href="#">Option</a> <br>
-    </div>
+        {% endblock %}
+      </div>
 
     <div class="right-sidebar">
+      {% block rightSidebar %}
       <a href="#">Option</a> <br>
       <a href="#">Option</a> <br>
       <a href="#">Option</a> <br>
@@ -59,8 +62,10 @@
       <a href="#">Option</a> <br>
       <a href="#">Option</a> <br>
       <a href="#">Option</a> <br>
+      {% endblock %}
     </div>
 
+    {% block content %}
     <div class="middle">
       <div class="choose">
         <table>
@@ -73,48 +78,34 @@
         </table>
       </div>
       <br><br>
-      <div class="question-box">
-        <div class="leftbox">
-          <div class="smallbox">
-            2 <br> votes
-          </div>
-          <div class="smallbox">
-            3 <br> answers
-          </div>
-        </div>
+      
+      {% if questions %}
+        {% for question in questions %}
+          <div class="question-box">
+            <div class="leftbox">
+              <div class="smallbox">
+               {{ question.upvotes }}<br> votes
+              </div>
+              <div class="smallbox">
+                {{ question.answer_count }} <br> answers
+              </div>
+            </div>
 
-        <div class="rightbox">
-          <a href="#">This is a sample question to check the alignment of various things in this website.</a>
-        </div>
-        <div class="username">
-          <a href="#">username</a>
-        </div>
-      </div>
+            <div class="rightbox">
+              <a href="#">{{ question.content }}</a>
+            </div>
+            <div class="username">
+              <a href="#">{{ question.username }}</a>
+            </div>
+          </div>
+          <br>
+        {% endfor %}
+      {% endif %}
       <br>
-      <div class="question-box">
-        <div class="leftbox">
-          <div class="smallbox">
-            2 <br> votes
-          </div>
-          <div class="smallbox">
-            3 <br> answers
-          </div>
-        </div>
-
-        <div class="rightbox">
-          <a href="#">This is a sample question to check the alignment of various things in this website.</a>
-        </div>
-
-        <div class="username">
-          <a href="#">username</a>
-        </div>
-      </div>
-      <br>
-      test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test
     </div>
 
     <button type="button" class="btn btn-default" name="Newest">Ask Question</button>
-
+    {% endblock %}
   </div>
   <!-- <footer class="bottombar navbar-inverse">
     <div class="container">
