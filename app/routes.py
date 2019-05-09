@@ -22,4 +22,4 @@ def index():
 
 @app.route('/question')
 def question():
-    return render_template('index.html')
+    return render_template('question.html')
