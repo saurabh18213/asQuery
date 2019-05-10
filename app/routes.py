@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, flash, redirect
 from app import app
 from flask_mysqldb import MySQL
 from app.forms import LoginForm
@@ -7,6 +7,7 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'cs309_project'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+app.config['SECRET_KEY'] = 'you-will-never-guess'
 mysql = MySQL(app)
 
 @app.route('/')
@@ -18,7 +19,6 @@ def index():
     as answer_count, ( select U.username from User U where U.userid = Q.userid) 
     as username from Question Q;''')
     questions = cur.fetchall()
-    print(questions)
     return render_template('home.html', questions=questions)
 
 @app.route('/question')
@@ -30,6 +30,6 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         flash('Login requested for user {}, remember_me={}'.format(
-            form.username.data, form.remember_me.data))
+            form.email.data, form.remember_me.data))
         return redirect('/')
     return render_template('login.html', title='Sign In', form=form)

@@ -7,14 +7,14 @@ mydb = mysql.connector.connect(
 )
 
 user_insert_str = "insert into User(email, password, username) values (%s, %s, %s)"
-question_insert_str = "insert into Question (content, userid) values (%s, %s);"
+question_insert_str = "insert into Question (content, userid, title) values (%s, %s, %s);"
 answer_insert_str = "insert into Answer (content, question_id, userid) values (%s, %s, %s);"
 
 def user_insert_vals(n):
     return ("user" + str(n) + "@users.com", "samplepassword" + str(n), "user" + str(n))
 
 def question_insert_vals(n, m):
-    return ("What is question number " + str(n) + " ?", m)
+    return ("What is question number " + str(n) + " ?", m, "Question no." + str(n))
 
 def answer_insert_vals(n, m, t):
     return ("This is answer number " + str(n) + " .", m, t)
