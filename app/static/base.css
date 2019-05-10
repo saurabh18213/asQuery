@@ -95,7 +95,17 @@
   padding-left: 12px;
   padding-right: 12px;
   padding-bottom: 12px;
+  /* max-height: 64px; */
 }
+
+.answer-box{
+  background-color: #f1f1f1;
+  padding-top: 12px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-bottom: 12px;
+}
+
 .question-box th, tr{
   padding-left: 10px;
   padding-right: 10px;

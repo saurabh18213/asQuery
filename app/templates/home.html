@@ -2,17 +2,7 @@
 
 {% block content %}
 
-    <div class="sidebar">
-        {% block leftSidebar %}
-        <a href="#">Option</a> <br>
-        <a href="#">Option</a> <br>
-        <a href="#">Option</a> <br>
-        <a href="#">Option</a> <br>
-        <a href="#">Option</a> <br>
-        {% endblock %}
-      </div>
-
-    <div class="right-sidebar">
+    <!-- <div class="right-sidebar">
       {% block rightSidebar %}
       <a href="#">Option</a> <br>
       <a href="#">Option</a> <br>
@@ -30,7 +20,7 @@
       <a href="#">Option</a> <br>
       <a href="#">Option</a> <br>
       {% endblock %}
-    </div>
+    </div> -->
 
     
     <div class="middle">
@@ -48,28 +38,31 @@
       
       {% if questions %}
         {% for question in questions %}
-          <div class="question-box">
-            <div class="leftbox">
-              <div class="smallbox">
-               {{ question.upvotes }}<br> votes
-              </div>
-              <div class="smallbox">
-                {{ question.answer_count }} <br> answers
-              </div>
-            </div>
-
-            <div class="rightbox">
-              <a href="#">{{ question.content }}</a>
-            </div>
-            <div class="username">
-              <a href="#">{{ question.username }}</a>
-            </div>
-          </div>
-          <br>
+      <div class="question-box">
+          <table >
+            <tr>
+              <th class="left-cell"> 0 <br>votes <br> 0  <br>answers</th>
+              <th class="right-cell">
+                <h4><a href="question/{{ question.question_id }}" class="question">{{ question.title }}</a></h4>
+                <div class="ques-text">
+                  {{ question.content }}
+                </div>
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <th class="asked-by">asked by : <a href="users/{{ question.userid }}">{{ question.username }}</a>  <br>
+                 <button type="button" id="down-btn" class="btn btn-success glyphicon glyphicon-thumbs-down" > {{ question.upvotes }} </button>
+                 <button type="button" id="up-btn" class="btn btn-success glyphicon glyphicon-thumbs-up" > {{ question.downvotes }} </button>
+              </th>
+            </tr>
+          </table>
+        </div>
+        <br><br>
         {% endfor %}
       {% endif %}
-      <br>
-    </div>
+
+  
 
     <button type="button" class="btn btn-default" name="Newest">Ask Question</button>
     {% endblock %}

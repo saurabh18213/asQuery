@@ -1,77 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="sidebar">
-        <a href="#">Option</a> <br>
-        <a href="#">Option</a> <br>
-        <a href="#">Option</a> <br>
-        <a href="#">Option</a> <br>
-        <a href="#">Option</a> <br>
-    </div>
-
-    <div class="right-sidebar">
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-      <a href="#">Option</a> <br>
-    </div>
+    
 
 
     <div class="middle">
-
+      {% if question %}
       <div class="main-question">
-        <h3>This is a sample question to check the alignment of various things in this website.</h3>
+          <h3>{{ question.title }}</h3>
+          <p> {{ question.content }} </p>
       </div>
+      {% endif %}
+      
       <br>
-      <div class="choose">
-        <table>
-          <tr>
-            <th> <button type="button" class="btn btn-default" name="Newest">Newest</button></th>
-            <th> <button type="button" class="btn btn-default" name="Newest">Popular</button></th>
-            <th> <button type="button" class="btn btn-default" name="Newest">Test</button></th>
-            <th> <button type="button" class="btn btn-default" name="Newest">Test</button></th>
-          </tr>
-        </table>
-      </div>
-      <br><br>
-      <div class="question-box">
-        Ansered by : <a href="#">username</a>
-        <br><br>
-        A sample answer to the sample question to test the alignment
+      {% if answers %}
+       {% for answer in answers %}
+      <div class="answer-box">
+        {{ answer.content }}
 
-        <br><br>
+        <br>
+        Answered by : <a href="users/{{ answer.userid }}">{{ answer.username }}</a>
+        <br>        
         <button type="button" class="btn btn-default" name="Newest">Upvote</button>
-        <a href="#">num</a>
+        <a href="#">{{ answer.upvotes - answer.downvotes}}</a>
         <button type="button" class="btn btn-default" name="Newest">Downvote</button>
-        <a href="">num</a>
 
       </div>
       <br>
-      <div class="question-box">
-        Ansered by : <a href="#">username</a>
-        <br><br>
-        A sample answer to the sample question to test the alignment
-
-        <br><br>
-        <button type="button" class="btn btn-default" name="Newest">Upvote</button>
-        <a href="#">num</a>
-        <button type="button" class="btn btn-default" name="Newest">Downvote</button>
-        <a href="">num</a>
-
-      </div>
-      <br>
-      test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test
+      {% endfor %}
+      {% endif %}
+      
     </div>
 
 
