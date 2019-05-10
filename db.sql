@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.16, for Linux (x86_64)
 --
--- Host: localhost    Database: QAproject
+-- Host: localhost    Database: cs309_project
 -- ------------------------------------------------------
 -- Server version	8.0.16
 
@@ -115,6 +115,7 @@ CREATE TABLE `Question` (
   `asked_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `content` text,
   `userid` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
   PRIMARY KEY (`question_id`),
   KEY `userid` (`userid`),
   CONSTRAINT `Question_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`) ON DELETE CASCADE
@@ -241,7 +242,7 @@ DROP TABLE IF EXISTS `User`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `User` (
   `email` varchar(40) NOT NULL,
-  `password` varchar(40) NOT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `username` varchar(20) NOT NULL,
   `userid` int(11) NOT NULL AUTO_INCREMENT,
   `reputation` int(11) DEFAULT '0',
@@ -269,4 +270,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-09 19:33:14
+-- Dump completed on 2019-05-10  6:32:16
