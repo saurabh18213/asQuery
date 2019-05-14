@@ -1,7 +1,8 @@
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, session
 from app import app
 from flask_mysqldb import MySQL
 from app.forms import LoginForm
+from app.user import User
 
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
@@ -21,15 +22,44 @@ def index():
     questions = cur.fetchall()
     return render_template('home.html', questions=questions)
 
-@app.route('/question')
-def question():
-    return render_template('question.html')
+# @app.route('/question')
+# def question():
+#     return render_template('question.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        flash('Login requested for user {}, remember_me={}'.format(
-            form.email.data, form.remember_me.data))
-        return redirect('/')
-    return render_template('login.html', title='Sign In', form=form)
+# # @login_manager.user_loader
+# # def user_loader(email):
+# #     user = User(email)
+
+# #     if user.is_active() is False:
+# #         return
+
+# #     return user
+
+
+# # @login_manager.request_loader
+# # def request_loader(request):
+# #     email = request.form.get('email')
+# #     user = User(email)
+
+# #     if user.is_active() is False:
+# #         return
+# #     # DO NOT ever store passwords in plaintext and always compare password
+# #     # hashes using constant-time comparison!
+# #     user.set_authentication(request.form['password'])
+# #     return user
+
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     form = LoginForm()
+
+#     if form.validate_on_submit():
+#         user = User(form.email.data)
+#         user.set_authentication(form.password.data)
+        
+#         if user.is_authenticated(): 
+#             session['user'] = user  
+#             return redirect('/') 
+
+#         return render_template('login.html', title='Sign In', form=form)
+
+#     return render_template('login.html', title='Sign In', form=form)

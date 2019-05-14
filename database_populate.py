@@ -1,4 +1,5 @@
 import mysql.connector 
+from werkzeug.security import generate_password_hash
 
 mydb = mysql.connector.connect(
   user="root",
@@ -11,7 +12,7 @@ question_insert_str = "insert into Question (content, userid, title) values (%s,
 answer_insert_str = "insert into Answer (content, question_id, userid) values (%s, %s, %s);"
 
 def user_insert_vals(n):
-    return ("user" + str(n) + "@users.com", "samplepassword" + str(n), "user" + str(n))
+    return ("user" + str(n) + "@users.com", generate_password_hash("samplepassword" + str(n)), "user" + str(n))
 
 def question_insert_vals(n, m):
     return ("What is question number " + str(n) + " ?", m, "Question no." + str(n))
