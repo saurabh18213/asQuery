@@ -3,6 +3,7 @@ from app import app
 from flask_mysqldb import MySQL
 from app.forms import LoginForm
 from app.user import User
+import json
 
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
@@ -22,44 +23,24 @@ def index():
     questions = cur.fetchall()
     return render_template('home.html', questions=questions)
 
-# @app.route('/question')
-# def question():
-#     return render_template('question.html')
-
-# # @login_manager.user_loader
-# # def user_loader(email):
-# #     user = User(email)
-
-# #     if user.is_active() is False:
-# #         return
-
-# #     return user
+@app.route('/question')
+def question():
+    return render_template('question.html')
 
 
-# # @login_manager.request_loader
-# # def request_loader(request):
-# #     email = request.form.get('email')
-# #     user = User(email)
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
 
-# #     if user.is_active() is False:
-# #         return
-# #     # DO NOT ever store passwords in plaintext and always compare password
-# #     # hashes using constant-time comparison!
-# #     user.set_authentication(request.form['password'])
-# #     return user
-
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     form = LoginForm()
-
-#     if form.validate_on_submit():
-#         user = User(form.email.data)
-#         user.set_authentication(form.password.data)
+    if form.validate_on_submit():
+        user = User(form.email.data)
+        user.set_authentication(form.password.data)
         
-#         if user.is_authenticated(): 
-#             session['user'] = user  
-#             return redirect('/') 
+        if user.is_authenticated(): 
+            session['user'] = json.loads(json.dumps(user.__dict__))
+            return redirect('/') 
 
-#         return render_template('login.html', title='Sign In', form=form)
+        return render_template('login.html', title='Sign In', form=form)
 
-#     return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title='Sign In', form=form)
+

@@ -1,8 +1,13 @@
 from app import app
-from flask_mysqldb import MySQL
+import mysql.connector 
 from werkzeug.security import check_password_hash
 
-mysql = MySQL(app)
+mydb = mysql.connector.connect(
+  user="root",
+  passwd="",
+  database="cs309_project"
+)
+
 
 class User():
     
@@ -11,10 +16,11 @@ class User():
     userid = 0
     activity = True
     pwd_hash = ""
+    username = ""
 
     def __init__(self, email):
-        cur = mysql.connection.cursor()
-        query = '''select password, userid from User where email = ''' + str(email) + ''' ;'''
+        cur = mydb.cursor()
+        query = "select password, userid, username  from User where email = '" + email +  "';"
         cur.execute(query)
         result = cur.fetchone()
         self.email = email
@@ -23,23 +29,24 @@ class User():
             self.activity = False
             return
 
-        self.pwd_hash = result['password']
-        self.userid = result['userid']
+        self.pwd_hash = result[0]
+        self.userid = result[1]
         self.email = email
+        self.username = result[2]
         return
 
-    def set_authentication(password):
-        self.auth = check_password_hash(self.pwd_hash, 'password')
+    def set_authentication(self, password):
+        self.auth = check_password_hash(self.pwd_hash, password)
         return
 
-    def is_authenticated():
+    def is_authenticated(self):
         return self.auth
 
-    def is_active():
+    def is_active(self):
         return self.activity
 
-    def is_anonymous():
+    def is_anonymous(self):
         return False
 
-    def get_id():
-        return self.userid   
+    def get_id(self):
+        return self.userid       

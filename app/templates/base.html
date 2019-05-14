@@ -27,12 +27,15 @@
     </div>
   </form>
   <ul class="nav navbar-nav navbar-right">
-    <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-    <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      {% if session.get('user') %}
+        <li><a href="#">{{ session['user']['username'] }} </a></li>
+      {% else %} 
+        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      {% endif %}
   </ul>
 </div>
   </header>
-
   <div class="center-area">
     {% block content %}{% endblock %}
     {% with messages = get_flashed_messages() %}
