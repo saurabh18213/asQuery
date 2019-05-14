@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, session
 from app import app
 from flask_mysqldb import MySQL
-from app.forms import LoginForm
-from app.user import User
+from app.forms import LoginForm, SignupForm
+from app.user import User, CreateUser
 import json
 
 app.config['MYSQL_USER'] = 'root'
@@ -27,6 +27,18 @@ def index():
 def question():
     return render_template('question.html')
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = SignupForm()
+
+    if form.validate_on_submit():
+        CreateUser(form.email.data, form.password.data, form.username.data)
+        user = User(form.email.data)
+        user.set_authentication(form.password.data)
+        session['user'] = user.__dict__
+        return redirect('/') 
+
+    return render_template('signup.html', title='Sign In', form=form)    
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -37,10 +49,15 @@ def login():
         user.set_authentication(form.password.data)
         
         if user.is_authenticated(): 
-            session['user'] = json.loads(json.dumps(user.__dict__))
+            session['user'] = user.__dict__
             return redirect('/') 
 
-        return render_template('login.html', title='Sign In', form=form)
+        return render_template('login.html', title='Log In', form=form)
 
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title='Log In', form=form)
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect('/')
 

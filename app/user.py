@@ -1,6 +1,6 @@
 from app import app
 import mysql.connector 
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 mydb = mysql.connector.connect(
   user="root",
@@ -8,6 +8,14 @@ mydb = mysql.connector.connect(
   database="cs309_project"
 )
 
+user_insert_str = "insert into User(email, password, username) values (%s, %s, %s)"
+
+def CreateUser(email, password, username):
+    user_data = (str(email), generate_password_hash(password), str(username))
+    cur = mydb.cursor()
+    cur.execute(user_insert_str, user_data)
+    mydb.commit()
+    return
 
 class User():
     
