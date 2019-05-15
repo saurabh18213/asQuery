@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, session
+from flask import render_template, flash, redirect, session, request
 from app import app
 from flask_mysqldb import MySQL
 from app.forms import LoginForm, SignupForm
@@ -81,6 +81,10 @@ def login():
         return render_template('login.html', title='Log In', form=form)
 
     return render_template('login.html', title='Log In', form=form)
+
+@app.route('/askquestion')
+def askquestion():
+    return render_template('askquestion.html')
 
 @app.route('/logout')
 def logout():
