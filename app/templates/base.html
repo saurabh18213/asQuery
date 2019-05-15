@@ -27,12 +27,16 @@
     </div>
   </form>
   <ul class="nav navbar-nav navbar-right">
-    <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-    <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      {% if session.get('user') %}
+        <li><a href="#">{{ session['user']['username'] }} </a></li>
+        <li><a href="/logout"><span class="glyphicon glyphicon-user"></span> Logout</a></li>
+      {% else %} 
+        <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      {% endif %}
   </ul>
 </div>
   </header>
-
   <div class="center-area">
       <div class="sidebar">
           <a href="/">Questions</a> <br>
@@ -40,6 +44,16 @@
           <a href="#">Tags</a> <br>
       </div>
     {% block content %}{% endblock %}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+        
   </div>
 
 

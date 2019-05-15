@@ -1,13 +1,15 @@
-from flask import render_template, flash, redirect, url_for, session, request, logging
+from flask import render_template, flash, redirect, session
 from app import app
 from flask_mysqldb import MySQL
-from app.forms import LoginForm
-#from wtforms import Form, StringField, TextAreaField, PasswordField, validators, IntegerField
+from app.forms import LoginForm, SignupForm
+from app.user import User, CreateUser
+import json
 
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'cs309_project'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+app.config['SECRET_KEY'] = 'you-will-never-guess'
 mysql = MySQL(app)
 
 @app.route('/')
@@ -19,7 +21,6 @@ def index():
     as answer_count, ( select U.username from User U where U.userid = Q.userid) 
     as username from Question Q;''')
     questions = cur.fetchall()
-    #print(questions)
     return render_template('home.html', questions=questions)
 
 @app.route('/question/<int:id>')
@@ -52,40 +53,37 @@ def search():
 
 
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = SignupForm()
+
+    if form.validate_on_submit():
+        CreateUser(form.email.data, form.password.data, form.username.data)
+        user = User(form.email.data)
+        user.set_authentication(form.password.data)
+        session['user'] = user.__dict__
+        return redirect('/') 
+
+    return render_template('signup.html', title='Sign In', form=form)    
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # form = LoginForm(request.form)
-    # if request.method == 'POST':
-        # email = form['email'].data
-        # password_input = form['password'].data
-# 
-        # cur = mysql.connection.cursor()
-        # result = cur.execute("SELECT * FROM User where email = %s", [email])
-        # if result>0:
-            # data = cur.fetchone()
-            # password = data['password']
-            # if (password_input==password):
-                # result = cur.execute("SELECT username FROM User where email = %s", [email])
-                # data = cur.fetchone()
-                # session['logged_in'] = True
-                # session['username'] = username
-                # session['userid'] = data['userid']
-                # flash("You are now logged in", 'success')
-                # return redirect(url_for('/'))
-            # else:
-                # error = 'Invalid Login'
-                # return render_template('login.html', error= error)
-        # else:
-            # error = 'Invalid Login'
-            # return render_template('login.html', error= error)
-        # cur.close()
-    return render_template('login.html')
+    form = LoginForm()
 
-    # if current_user.is_authenticated:
-        # return redirect(url_for('/'))
-    # form = LoginForm()
-    # if form.validate_on_submit():
-        # flash('Login requested for user {}, remember_me={}'.format(
-            # form.username.data, form.remember_me.data))
-        # return redirect('/')
-    # return render_template('login.html', title='Sign In', form=form)
+    if form.validate_on_submit():
+        user = User(form.email.data)
+        user.set_authentication(form.password.data)
+        
+        if user.is_authenticated(): 
+            session['user'] = user.__dict__
+            return redirect('/') 
+
+        return render_template('login.html', title='Log In', form=form)
+
+    return render_template('login.html', title='Log In', form=form)
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect('/')
+
