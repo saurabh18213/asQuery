@@ -40,7 +40,7 @@ def question(id):
 @app.route('/askquestion')
 def askquestion():
     return render_template('askquestion.html')
-    
+
 @app.route('/search', methods=['POST'])
 def search():
     if request.method == 'POST':
@@ -93,4 +93,7 @@ def logout():
     session.pop('user', None)
     return redirect('/')
 
-
+@app.route('/user/<int:id>')
+def user_page(id):
+    cur = mysql.connection.cursor()
+    cur.execute()
