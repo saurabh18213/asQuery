@@ -82,12 +82,13 @@ def login():
 
     return render_template('login.html', title='Log In', form=form)
 
-@app.route('/askquestion')
-def askquestion():
-    return render_template('askquestion.html')
-
 @app.route('/logout')
 def logout():
     session.pop('user', None)
     return redirect('/')
+
+
+@app.route('/askquestion')
+def askquestion():
+    return render_template('askquestion.html')
 
