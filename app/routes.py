@@ -35,6 +35,12 @@ def question(id):
     #print(answerDetail)
     return render_template('question.html', question=questionDetail, answers=answerDetail)
 
+
+
+@app.route('/askquestion')
+def askquestion():
+    return render_template('askquestion.html')
+    
 @app.route('/search', methods=['POST'])
 def search():
     if request.method == 'POST':
@@ -87,8 +93,4 @@ def logout():
     session.pop('user', None)
     return redirect('/')
 
-
-@app.route('/askquestion')
-def askquestion():
-    return render_template('askquestion.html')
 
