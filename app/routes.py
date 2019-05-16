@@ -94,6 +94,15 @@ def logout():
     return redirect('/')
 
 @app.route('/user/<int:id>')
-def user_page(id):
+def user(id):
     cur = mysql.connection.cursor()
-    cur.execute()
+    cur.execute("select u.username, u.reputation, u.userid from User u where u.userid = " + str(id) + ';')
+    user = cur.fetchone()
+    cur.execute("select q.title, q.question_id, q.asked_at from Question q where q.userid = " + str(id) + ";")
+    questions = cur.fetchall()
+    cur.execute("select q.title, q.question_id, q.asked_at from Question q, Answer a where a.question_id = q.question_id and a.userid = " + str(id) +";")
+    answers = cur.fetchall()
+    
+    return render_template('user.html', user=user, questions=questions, answers=answers)
+
+@app.tag('/tag/<string:tagname>')

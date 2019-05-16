@@ -38,7 +38,7 @@
                 </tr>
                 <tr>
                   <th></th>
-                  <th class="asked-by">asked by : <a href="users/{{ question.userid }}">{{ question.username }}</a>  <br>
+                  <th class="asked-by">asked by : <a href="/user/{{ question.userid }}">{{ question.username }}</a>  <br>
                      <button type="button" id="down-btn" class="btn btn-success glyphicon glyphicon-thumbs-down" > {{ question.upvotes }} </button>
                      <button type="button" id="up-btn" class="btn btn-success glyphicon glyphicon-thumbs-up" > {{ question.downvotes }} </button>
                   </th>

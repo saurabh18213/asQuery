@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="middle">
+    <p>
+        {{ user.username }} <br>
+        Reputation - {{ user.reputation }}
+    </p>
+    <p>
+        <h2>
+            Questions
+        </h2>
+        {% for question in questions %}
+            <h4><a href="/question/{{ question.question_id }}">{{ question.title }}</a></h4>
+            <h6>{{ question.asked_at }}</h6>
+        {% endfor %}
+    </p>
+    <p>
+        <h2>
+            Answers
+        </h2>
+        {% for question in answers %}
+            <h4><a href="/question/{{ question.question_id }}">{{ question.title }}</a></h4>
+            <h6>{{ question.asked_at }}</h6>
+        {% endfor %}
+    </p>
+</div>
+{% endblock %}
