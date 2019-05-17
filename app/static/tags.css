@@ -1,0 +1,19 @@
+.tag-box a{
+    color: black;
+    background-color:  #ccffcc;;
+    border-radius: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
+  .tag-box a:hover{
+    text-decoration: none;
+    color: black;
+    background-color:#99ff99;
+    transition: background-color .5s;
+  }
+  .tag-matter{
+    padding-top: 7px;
+  }
+  
