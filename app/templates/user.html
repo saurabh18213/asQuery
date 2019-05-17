@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block include %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='user.css') }}">
+{% endblock %}
+
+{% block content %}
+
+
+<div class="middle">
+      <div class="container">
+        <br>
+        <div class="container">
+        <div class="row" id="info">
+          <div class="col-sm-4"><img src="{{ url_for('static', filename='Lego_1.jpg') }}" alt="" height=100% width=100%x> </div>
+          <div class="col-sm-8">
+          <h2>{{ user.username }}</h2> <span>&#11088;</span> {{ user.reputation }} <br><span>&#129299;</span> user since {{ user.user_since }} <br><span>&#128580</span> {{ questions|length }} questions asked <br> <span >&#128578;</span> {{ answers|length }} answers given <br>
+          </div>
+        </div>
+        </div>
+        <hr>
+        <div class="container">
+          <div class="row">
+          <div class="col-sm-6"> <h3>Questions Asked Recently</h3>
+            <div class="question-box">
+              <table>
+                {% for question in questions %}
+                <tr>
+                  <th><a href="/question/{{ question.question_id }}">{{ question.title }}</a></th>
+                </tr>
+                <tr>
+                  <th class="time">Asked at {{ question.asked_at }}</th>
+                </tr>
+                <tr>
+                  <th>
+                  <span class="glyphicon">&#xe125;</span> {{ question.upvotes }} &nbsp;<span class="glyphicon">&#xe126;</span> {{ question.downvotes }}</th>
+                </tr>
+                {% endfor %}
+              </table>
+            </div>
+
+
+          </div>
+          <div class="col-sm-6"> <h3>Anwers Given Recently</h3>
+            <div class="question-box">
+                <table>
+                  {% for question in answers %}
+                  <tr>
+                    <th><a href="/question/{{ question.question_id }}">{{ question.title }}</a></th>
+                  </tr>
+                  <tr>
+                    <th class="time">Answered at {{ question.answered_at }}</th>
+                  </tr>
+                  <tr>
+                    <th>
+                    <span class="glyphicon">&#xe125;</span> {{ question.upvotes }} &nbsp;<span class="glyphicon">&#xe126;</span> {{ question.downvotes }}</th>
+                  </tr>
+                  {% endfor %}
+                </table>
+            </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+{% endblock %}

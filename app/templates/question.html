@@ -19,7 +19,7 @@
         {{ answer.content }}
 
         <br>
-        Answered by : <a href="users/{{ answer.userid }}">{{ answer.username }}</a>
+        Answered by : <a href="/user/{{ answer.userid }}">{{ answer.username }}</a>
         <br>        
         <button type="button" class="btn btn-default" name="Newest">Upvote</button>
         <a href="#">{{ answer.upvotes - answer.downvotes}}</a>

@@ -10,6 +10,8 @@ mydb = mysql.connector.connect(
 user_insert_str = "insert into User(email, password, username) values (%s, %s, %s)"
 question_insert_str = "insert into Question (content, userid, title) values (%s, %s, %s);"
 answer_insert_str = "insert into Answer (content, question_id, userid) values (%s, %s, %s);"
+tag_insert_str = "insert into Tag (tagname, description) values (%s, %s);"
+tagged_insert_str = "insert into Tagged (tagname, question_id) values (%s, %s);"
 
 def user_insert_vals(n):
     return ("user" + str(n) + "@users.com", generate_password_hash("samplepassword" + str(n)), "user" + str(n))
@@ -39,5 +41,8 @@ for i in range(1, 442):
         k = k + 1   
         mycursor.execute(answer_insert_str, answer_insert_vals(k, i, (i + j) % 9 + 1))
 
+for i in range(1, 50):
+    for j in range(1, 50):
+        mycursor.execute(tagged_insert_str,("tag" + str(i), j))
 
 mydb.commit()

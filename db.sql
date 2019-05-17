@@ -49,6 +49,33 @@ LOCK TABLES `Answer` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `Answer_Upvotes`
+--
+
+DROP TABLE IF EXISTS `Answer_Upvotes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `Answer_Upvotes` (
+  `question_id` int(11) NOT NULL,
+  `answer_id` int(11) NOT NULL,
+  `userid` int(11) NOT NULL,
+  PRIMARY KEY (`question_id`,`answer_id`,`userid`),
+  KEY `userid` (`userid`),
+  CONSTRAINT `Answer_Upvotes_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `Question` (`question_id`),
+  CONSTRAINT `Answer_Upvotes_ibfk_2` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Answer_Upvotes`
+--
+
+LOCK TABLES `Answer_Upvotes` WRITE;
+/*!40000 ALTER TABLE `Answer_Upvotes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Answer_Upvotes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Answer_votes`
 --
 
@@ -132,6 +159,32 @@ LOCK TABLES `Question` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `Question_Upvotes`
+--
+
+DROP TABLE IF EXISTS `Question_Upvotes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `Question_Upvotes` (
+  `question_id` int(11) NOT NULL,
+  `userid` int(11) NOT NULL,
+  PRIMARY KEY (`question_id`,`userid`),
+  KEY `userid` (`userid`),
+  CONSTRAINT `Question_Upvotes_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `Question` (`question_id`) ON DELETE CASCADE,
+  CONSTRAINT `Question_Upvotes_ibfk_2` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Question_Upvotes`
+--
+
+LOCK TABLES `Question_Upvotes` WRITE;
+/*!40000 ALTER TABLE `Question_Upvotes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Question_Upvotes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Question_votes`
 --
 
@@ -168,6 +221,7 @@ DROP TABLE IF EXISTS `Tag`;
 CREATE TABLE `Tag` (
   `Tagname` char(30) NOT NULL,
   `question_count` int(11) DEFAULT '0',
+  `Description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Tagname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -232,6 +286,27 @@ LOCK TABLES `Tagged` WRITE;
 /*!40000 ALTER TABLE `Tagged` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Tagged` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `before_tagged_insert` BEFORE INSERT ON `Tagged` FOR EACH ROW BEGIN
+    IF EXISTS(select tagname from Tag where tagname = NEW.tagname) THEN
+        Update Tag set question_count = question_count + 1 where tagname = NEW.tagname; 
+    ELSE
+        insert into Tag(tagname, question_count, description) values (NEW.tagname, 1, "");
+    END IF;    
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `User`
@@ -246,7 +321,7 @@ CREATE TABLE `User` (
   `username` varchar(20) NOT NULL,
   `userid` int(11) NOT NULL AUTO_INCREMENT,
   `reputation` int(11) DEFAULT '0',
-  `user_since` timestamp NULL DEFAULT NULL,
+  `user_since` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`userid`),
   UNIQUE KEY `userid` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -270,4 +345,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-10  6:32:16
+-- Dump completed on 2019-05-16 23:31:49
