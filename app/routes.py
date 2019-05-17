@@ -105,10 +105,48 @@ def user(id):
     
     return render_template('user.html', user=user, questions=questions, answers=answers)
 
-@app.tag('/tag/<string:tagname>')
+@app.route('/users')
+def users():
+    cur = mysql.connection.cursor()
+    cur.execute("select username, reputation, userid, user_since from User")
+    users = cur.fetchall()
+
+    return render_template('', users=users)
+
+@app.route('/user_search', methods=['POST'])
+def user_search():
+    if request.method == 'POST':
+        query = request.form['search']
+        cur = mysql.connection.cursor()
+        user_query = "select username, reputation, userid, user_since from User where username like '%{}%'".format(query)
+        cur.execute(user_query)
+        userDetail = cur.fetchall()
+        return render_template('', users=userDetail)
+
+@app.route('/tag/<string:tagname>')
 def tag(tagname):
     cur = mysql.connection.cursor()
     cur.execute("select tagname, question_count, description from Tag where tagname = " + tagname)
     tag = cur.fetchone()
     cur.execute("select q.title, q.question_id, q.asked_at from Question q, Tagged t where t.question_id = q.question_id and t.tagname = " + tagname)
     questions = cur.fetchall()
+
+    return render_template('', tag=tag, questions=questions)
+
+@app.route('/tags')
+def tags():
+    cur = mysql.connection.cursor()
+    cur.execute("select tagname, question_count, description from Tag")
+    tags = cur.fetchall()
+
+    return render_template('', tags=tags)
+
+@app.route('/tag_search', methods=['POST'])
+def tag_search():
+    if request.method == 'POST':
+        query = request.form['search']
+        cur = mysql.connection.cursor()
+        tag_query = "select tagname, question_count, description from Tag where tagname like '%{}%'".format(query)
+        cur.execute(tag_query)
+        tagDetail = cur.fetchall()
+        return render_template('', tags=tagDetail)
