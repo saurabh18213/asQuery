@@ -34,18 +34,25 @@ def newest():
     questions = cur.fetchall()
     return render_template('home.html', questions=questions)
 
-@app.route('/question/<int:id>')
+@app.route('/question/<int:id>', methods=['GET', 'POST'])
 def question(id):
+    form = AnswerForm()
+    if form.validate_on_submit():
+        cur = mysql.connection.cursor()
+        create_question = "INSERT INTO Answer (content, question_id, userid) values ('{}', {}, {})".format(form.answer.data, id, session['user']['userid'])
+        cur.execute(create_question)
+        mysql.connection.commit()
+        return redirect('/question/{}'.format(id))
     cur = mysql.connection.cursor()
-    question_query = "select Q.title, Q.content, Q.upvotes, Q.downvotes, Q.asked_at from Question Q where Q.question_id = {}".format(id)
+    question_query = "select Q.title, Q.content, Q.upvotes, Q.downvotes, Q.asked_at, Q.userid, (select U.username from User U where U.userid = Q.userid) as username, (select count(*) from Answer A where A.question_id = Q.question_id) as answer_count from Question Q where Q.question_id = {}".format(id)
     cur.execute(question_query)
     questionDetail = cur.fetchone()
-    print(questionDetail)
+    # print(questionDetail)
     answer_query = "select A.question_id, A.content, A.upvotes, A.downvotes, A.answered_at, (select U.userid from User U where U.userid = A.userid) as userid,  (select U.username from User U where U.userid = A.userid) as username from Answer A where A.question_id = {}".format(id) 
     cur.execute(answer_query)
     answerDetail = cur.fetchall()
     #print(answerDetail)
-    return render_template('question.html', question=questionDetail, answers=answerDetail)
+    return render_template('question.html', question=questionDetail, answers=answerDetail, qid=id, form=form)
 
 @app.route('/search', methods=['POST'])
 def search():
