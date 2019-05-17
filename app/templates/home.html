@@ -25,7 +25,7 @@
     
     <div class="middle">
       <div> 
-          <a href="askquestion" class="btn btn-primary">Ask Question</a>
+        {% if session.get('user') %}<a href="askquestion" class="btn btn-primary">Ask Question</a>{% endif %}
       </div>
       <div class="choose">
         <table>
@@ -43,9 +43,9 @@
         {% for question in questions %}
         <div class="row question">
             <div class="col-sm-2 quesdetails"> 
-              {{ question.upvotes-question.downvotes }} <br>votes <br> {{ question.answercount }} <br>answers<br>
-              <button type="button" id="down-btn" class="btn btn-success glyphicon glyphicon-thumbs-down" ></button>
+              {{ question.upvotes-question.downvotes }} <br>votes <br> {{ question.answer_count }} <br>answers<br>
               <button type="button" id="up-btn" class="btn btn-success glyphicon glyphicon-thumbs-up" ></button>
+              <button type="button" id="down-btn" class="btn btn-success glyphicon glyphicon-thumbs-down" ></button>
             </div>
             <div class="col-sm-10">
               <h4><a href="question/{{ question.question_id }}">{{ question.title }}</a></h4>
@@ -80,5 +80,5 @@
 
   
 
-    <button type="button" class="btn btn-default" name="Newest">Ask Question</button>
+    <!-- <button type="button" class="btn btn-default" name="Newest">Ask Question</button> -->
 {% endblock %}

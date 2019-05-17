@@ -1,7 +1,7 @@
-from flask import render_template, flash, redirect, session, request
+from flask import render_template, flash, redirect, session, request, url_for
 from app import app
 from flask_mysqldb import MySQL
-from app.forms import LoginForm, SignupForm
+from app.forms import *
 from app.user import User, CreateUser
 import json
 
@@ -29,6 +29,7 @@ def question(id):
     question_query = "select Q.title, Q.content, Q.upvotes, Q.downvotes, Q.asked_at from Question Q where Q.question_id = {}".format(id)
     cur.execute(question_query)
     questionDetail = cur.fetchone()
+    print(questionDetail)
     answer_query = "select A.question_id, A.content, A.upvotes, A.downvotes, A.answered_at, (select U.userid from User U where U.userid = A.userid) as userid,  (select U.username from User U where U.userid = A.userid) as username from Answer A where A.question_id = {}".format(id) 
     cur.execute(answer_query)
     answerDetail = cur.fetchall()
@@ -41,7 +42,7 @@ def search():
         query = request.form['search']
         #print(query)
         cur = mysql.connection.cursor()
-        question_query = "select Q.title, Q.content, Q.upvotes, Q.downvotes, Q.asked_at, Q.userid, Q.question_id, (select U.username from User U where U.userid = Q.userid) as username from Question Q where Q.title like '%{}%'".format(query)
+        question_query = "select Q.title, Q.content, Q.upvotes, Q.downvotes, Q.asked_at, Q.userid, Q.question_id, (select U.username from User U where U.userid = Q.userid) as username, (select count(*) from Answer A where A.question_id = Q.question_id) as answer_count from Question Q where Q.title like '%{}%'".format(query)
         cur.execute(question_query)
         questionDetail = cur.fetchall()
         #print(questionDetail)
@@ -49,7 +50,7 @@ def search():
         #cur.execute(answer_query)
         #answerDetail = cur.fetchall()
         #print(answerDetail)
-        return render_template('searchresults.html', questions=questionDetail)
+        return render_template('searchresults.html', questions=questionDetail, searchquery = query)
 
 
 
@@ -82,9 +83,22 @@ def login():
 
     return render_template('login.html', title='Log In', form=form)
 
-@app.route('/askquestion')
+@app.route('/askquestion', methods=['GET', 'POST'])
 def askquestion():
-    return render_template('askquestion.html')
+    if 'user' in session:
+        form = AskQuestion() 
+        if form.validate_on_submit():
+            cur = mysql.connection.cursor()
+            create_question = "INSERT INTO Question (status, content, title, userid) values (0, '{}', '{}', {})".format(form.body.data, form.title.data, session['user']['userid'])
+            cur.execute(create_question)
+            mysql.connection.commit()
+            find_question = "select max(question_id) from Question"
+            cur.execute(find_question)
+            qid = cur.fetchone()
+            print (qid['max(question_id)'])
+            return redirect('/question/{}'.format(qid['max(question_id)']))
+        return render_template('askquestion.html', form=form)
+    return redirect(url_for('login'))
 
 @app.route('/logout')
 def logout():
