@@ -106,3 +106,9 @@ def user(id):
     return render_template('user.html', user=user, questions=questions, answers=answers)
 
 @app.tag('/tag/<string:tagname>')
+def tag(tagname):
+    cur = mysql.connection.cursor()
+    cur.execute("select tagname, question_count, description from Tag where tagname = " + tagname)
+    tag = cur.fetchone()
+    cur.execute("select q.title, q.question_id, q.asked_at from Question q, Tagged t where t.question_id = q.question_id and t.tagname = " + tagname)
+    questions = cur.fetchall()
