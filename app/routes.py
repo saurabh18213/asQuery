@@ -23,6 +23,17 @@ def index():
     questions = cur.fetchall()
     return render_template('home.html', questions=questions)
 
+@app.route('/newest')
+def newest():
+    cur = mysql.connection.cursor()
+    cur.execute('''select Q.question_id, Q.status, 
+    Q.upvotes, Q.downvotes, Q.asked_at, Q.title,  Q.content, Q.userid,
+    (select count(*) from Answer A where A.question_id = Q.question_id)
+    as answer_count, ( select U.username from User U where U.userid = Q.userid) 
+    as username from Question Q order by Q.asked_at desc;''')
+    questions = cur.fetchall()
+    return render_template('home.html', questions=questions)
+
 @app.route('/question/<int:id>')
 def question(id):
     cur = mysql.connection.cursor()
