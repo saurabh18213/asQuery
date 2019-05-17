@@ -321,7 +321,7 @@ CREATE TABLE `User` (
   `username` varchar(20) NOT NULL,
   `userid` int(11) NOT NULL AUTO_INCREMENT,
   `reputation` int(11) DEFAULT '0',
-  `user_since` timestamp NULL DEFAULT NULL,
+  `user_since` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`userid`),
   UNIQUE KEY `userid` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

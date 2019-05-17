@@ -96,11 +96,11 @@ def logout():
 @app.route('/user/<int:id>')
 def user(id):
     cur = mysql.connection.cursor()
-    cur.execute("select u.username, u.reputation, u.userid from User u where u.userid = " + str(id) + ';')
+    cur.execute("select u.username, u.reputation, u.userid, u.user_since from User u where u.userid = " + str(id) + ';')
     user = cur.fetchone()
-    cur.execute("select q.title, q.question_id, q.asked_at from Question q where q.userid = " + str(id) + ";")
+    cur.execute("select q.title, q.question_id, q.asked_at, q.upvotes, q.downvotes from Question q where q.userid = " + str(id) + " order by q.asked_at DESC LIMIT 10;")
     questions = cur.fetchall()
-    cur.execute("select q.title, q.question_id, q.asked_at from Question q, Answer a where a.question_id = q.question_id and a.userid = " + str(id) +";")
+    cur.execute("select q.title, q.question_id, a.answered_at, q.upvotes, q.downvotes from Question q, Answer a where a.question_id = q.question_id and a.userid = " + str(id) +" order by q.asked_at DESC LIMIT 10;")
     answers = cur.fetchall()
     
     return render_template('user.html', user=user, questions=questions, answers=answers)
@@ -110,8 +110,14 @@ def users():
     cur = mysql.connection.cursor()
     cur.execute("select username, reputation, userid, user_since from User")
     users = cur.fetchall()
+    users_size = len(users)
+    x = int(users_size / 4)
 
-    return render_template('', users=users)
+    if users_size % 4:
+        x = x + 1
+
+    print(x)
+    return render_template('users.html', users=users)
 
 @app.route('/user_search', methods=['POST'])
 def user_search():
@@ -139,7 +145,7 @@ def tags():
     cur.execute("select tagname, question_count, description from Tag")
     tags = cur.fetchall()
 
-    return render_template('', tags=tags)
+    return render_template('tags.html', tags=tags)
 
 @app.route('/tag_search', methods=['POST'])
 def tag_search():

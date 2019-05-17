@@ -29,7 +29,7 @@
   </form>
   <ul class="nav navbar-nav navbar-right">
       {% if session.get('user') %}
-        <li><a href="#">{{ session['user']['username'] }} </a></li>
+        <li><a href="/user/{{ session['user']['userid'] }}">{{ session['user']['username'] }} </a></li>
         <li><a href="/logout"><span class="glyphicon glyphicon-user"></span> Logout</a></li>
       {% else %} 
         <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
