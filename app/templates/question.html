@@ -2,18 +2,18 @@
 
 {% block content %}
     
-
-
     <div class="middle">
       {% if question %}
       <div class="main-question">
           <h3>{{ question.title }}</h3>
-          <p> {{ question.content }} </p>
+          <p> {{ question.content }} </p><br><br>
+          <span>asked by : <a href="/user/{{ question.userid }}">{{ question.username }}</a></span><br>
+              <span>asked at : {{ question.asked_at }}</span>
       </div>
       {% endif %}
-      
       <br>
       {% if answers %}
+      <h3> {{ question.answer_count }} Answers </h3>
        {% for answer in answers %}
       <div class="answer-box">
         {{ answer.content }}
@@ -21,15 +21,28 @@
         <br>
         Answered by : <a href="/user/{{ answer.userid }}">{{ answer.username }}</a>
         <br>        
-        <button type="button" class="btn btn-default" name="Newest">Upvote</button>
+        {% if session.get('user') %}<button type="button" class="btn btn-default" name="Newest">Upvote</button>{% endif %}
         <a href="#">{{ answer.upvotes - answer.downvotes}}</a>
-        <button type="button" class="btn btn-default" name="Newest">Downvote</button>
+        {% if session.get('user') %}<button type="button" class="btn btn-default" name="Newest">Downvote</button>{% endif %}
 
       </div>
       <br>
       {% endfor %}
       {% endif %}
-      
+      {% if session.get('user') %}
+      <h2>Post your answer</h2>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.answer.label }}<br>
+            {{ form.answer(cols="60", rows="5") }}<br>
+            {% for error in form.answer.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    {% endif %}
     </div>
 
 

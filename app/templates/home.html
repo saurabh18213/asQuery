@@ -3,13 +3,13 @@
 {% block content %}
     <div class="middle">
       <div> 
-          <a href="askquestion" class="btn btn-primary">Ask Question</a>
+        {% if session.get('user') %}<a href="askquestion" class="btn btn-primary">Ask Question</a>{% endif %}
       </div>
       <div class="choose">
         <table>
           <tr>
-            <th> <button type="button" class="btn btn-default" name="Newest">Newest</button></th>
-            <th> <button type="button" class="btn btn-default" name="Newest">Popular</button></th>
+            <th> <a href="/newest" class="btn btn-default" name="Newest">Newest</th>
+            <th> <a href="#" class="btn btn-default" name="Popular">Popular</a></th>
             <!-- <th> <button type="button" class="btn btn-default" name="Newest">Test</button></th>
             <th> <button type="button" class="btn btn-default" name="Newest">Test</button></th> -->
           </tr>
@@ -22,15 +22,16 @@
         <div class="row question">
             <div class="col-sm-2 quesdetails"> 
               {{ question.upvotes-question.downvotes }} <br>votes <br> {{ question.answer_count }} <br>answers<br>
-              <button type="button" id="down-btn" class="btn btn-success glyphicon glyphicon-thumbs-down" ></button>
-              <button type="button" id="up-btn" class="btn btn-success glyphicon glyphicon-thumbs-up" ></button>
+              {% if session.get('user') %}<button type="button" id="up-btn" class="btn btn-success glyphicon glyphicon-thumbs-up" ></button>
+              <button type="button" id="down-btn" class="btn btn-success glyphicon glyphicon-thumbs-down" ></button>{% endif %}
             </div>
             <div class="col-sm-10">
               <h4><a href="/question/{{ question.question_id }}">{{ question.title }}</a></h4>
               <div class="ques-text">
                   {{ question.content }}
                 </div>
-              <span>asked by : <a href="/user/{{ question.userid }}">{{ question.username }}</a></span>
+              <span>asked by : <a href="/user/{{ question.userid }}">{{ question.username }}</a></span><br>
+              <span>asked at : {{ question.asked_at }}</span>
             </div>
         </div> 
       <!-- <div class="question-box">
@@ -57,6 +58,11 @@
       {% endif %}
 
   
+<<<<<<< HEAD
 </div>
     <button type="button" class="btn btn-default" name="Newest">Ask Question</button>
+=======
+
+    <!-- <button type="button" class="btn btn-default" name="Newest">Ask Question</button> -->
+>>>>>>> dae222772ef828b0e5a9c32e03bb185732a1e408
 {% endblock %}
