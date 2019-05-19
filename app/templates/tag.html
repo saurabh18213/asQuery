@@ -2,10 +2,21 @@
 
 {% block content %}
     <div class="middle">
+        <div class="container">
+        <div class="row">
+            <h2>Questions tagged [{{ tag.tagname }}]</h2>
+        </div>   
+        <div class="row">
+            <p>{{ tag.description }}</p>
+        </div>
+        <div class="row">
+            {{ tag.question_count }} questions
+        </div>
+        <br>
         {% for question in questions %}
         <div class="row question">
             <div class="col-sm-2 quesdetails"> 
-              {{ question.upvotes-question.downvotes }} <br>votes <br> {{ question.answercount }} <br>answers<br>
+              {{ question.upvotes-question.downvotes }} <br>votes <br> {{ question.answer_count }} <br>answers<br>
               <button type="button" id="down-btn" class="btn btn-success glyphicon glyphicon-thumbs-down" ></button>
               <button type="button" id="up-btn" class="btn btn-success glyphicon glyphicon-thumbs-up" ></button>
             </div>
@@ -17,6 +28,9 @@
               <span>asked by : <a href="/user/{{ question.userid }}">{{ question.username }}</a></span>
             </div>
         </div> 
-        {% endfor %}    
-    </div>    
+        <br>
+        {% endfor %}  
+        </div>  
+    </div>   
+
 {% endblock %}

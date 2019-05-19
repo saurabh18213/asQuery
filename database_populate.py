@@ -41,8 +41,11 @@ for i in range(1, 442):
         k = k + 1   
         mycursor.execute(answer_insert_str, answer_insert_vals(k, i, (i + j) % 9 + 1))
 
+for i in range(1, 26):
+	mycursor.execute(tag_insert_str, ("tag" + str(i), "description of tag" + str(i)))
+
 for i in range(1, 50):
-    for j in range(1, 50):
-        mycursor.execute(tagged_insert_str,("tag" + str(i), j))
+    for j in range(1, 9):
+        mycursor.execute(tagged_insert_str,("tag" + str(i), j * i))
 
 mydb.commit()
