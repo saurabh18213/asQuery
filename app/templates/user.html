@@ -12,7 +12,7 @@
         <br>
         <div class="container">
         <div class="row" id="info">
-          <div class="col-sm-4"><img src="{{ url_for('static', filename='Lego_1.jpg') }}" alt="" height=100% width=100%x> </div>
+          <div class="col-sm-4"><img src="{{ url_for('static', filename='profile.png') }}" alt="" height=100% width=100%x> </div>
           <div class="col-sm-8">
           <h2>{{ user.username }}</h2> <span>&#11088;</span> {{ user.reputation }} <br><span>&#129299;</span> user since {{ user.user_since }} <br><span>&#128580</span> {{ questions|length }} questions asked <br> <span >&#128578;</span> {{ answers|length }} answers given <br>
           </div>

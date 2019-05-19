@@ -116,8 +116,22 @@ def users():
     if users_size % 4:
         x = x + 1
 
-    print(x)
-    return render_template('users.html', users=users)
+    k = -1
+    user_list = []
+
+    for i in range(0, x):
+        clist = []
+        
+        for j in range(0, 4):
+            k = k + 1
+            
+            if (k < users_size) :
+                clist.append(users[k])
+        
+
+        user_list.append(clist)
+
+    return render_template('users.html', user_list=user_list)
 
 @app.route('/user_search', methods=['POST'])
 def user_search():
@@ -132,12 +146,12 @@ def user_search():
 @app.route('/tag/<string:tagname>')
 def tag(tagname):
     cur = mysql.connection.cursor()
-    cur.execute("select tagname, question_count, description from Tag where tagname = " + tagname)
+    cur.execute("select tagname, question_count, description from Tag where tagname = '" + tagname + "'")
     tag = cur.fetchone()
-    cur.execute("select q.title, q.question_id, q.asked_at from Question q, Tagged t where t.question_id = q.question_id and t.tagname = " + tagname)
+    cur.execute("select q.title, q.question_id, q.asked_at from Question q, Tagged t where t.question_id = q.question_id and t.tagname = '" + tagname + "'")
     questions = cur.fetchall()
 
-    return render_template('', tag=tag, questions=questions)
+    return render_template('tag.html', tag=tag, questions=questions)
 
 @app.route('/tags')
 def tags():

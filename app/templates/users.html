@@ -8,46 +8,24 @@
 
 <link rel="stylesheet" href="users.css">
 <div class="middle">
-    <div class="container">
-      <h2>Users</h2> <br>
-      <div class="row">
-        <div class="col-sm-3">
-          <table>
-            <tr>
-            <th><img src="{{ url_for('static', filename='Lego_1.jpg') }}" alt="" height="60px" width="60px;"></th>
-            <th><a href="#">username</a><br><span>&#11088;</span>12345</th>
-            </tr>
-          </table>
-          <hr>
-        </div>
-        <div class="col-sm-3">
-          <table>
-            <tr>
-            <th><img src="{{ url_for('static', filename='Lego_1.jpg') }}" alt="" height="60px" width="60px;"></th>
-            <th><a href="#">username</a><br><span>&#11088;</span>12345</th>
-            </tr>
-          </table>
-          <hr>
-        </div>
-        <div class="col-sm-3">
-          <table>
-            <tr>
-            <th><img src="{{ url_for('static', filename='Lego_1.jpg') }}" alt="" height="60px" width="60px;"></th>
-            <th><a href="#">username</a><br><span>&#11088;</span>12345</th>
-            </tr>
-          </table>
-          <hr>
-        </div>
-        <div class="col-sm-3">
-          <table>
-            <tr>
-            <th><img src="{{ url_for('static', filename='Lego_1.jpg') }}" alt="" height="60px" width="60px;"></th>
-            <th><a href="#">username</a><br><span>&#11088;</span>12345</th>
-            </tr>
-          </table>
-          <hr>
-        </div>
+  <div class="container">
+    <h2>Users</h2> <br>
+    {% for users in user_list %}
+    <div class="row">
+      {% for user in users %}
+      <div class="col-sm-3">
+        <table>
+          <tr>
+          <th><img src="{{ url_for('static', filename='profile.png') }}" alt="" height="60px" width="60px;"></th>
+          <th><a href="/user/{{ user.userid }}">{{ user.username }}</a><br><span>&#11088;</span>{{ user.reputation }}<br> User since {{ user.user_since.strftime('%Y-%m-%d') }}</th>
+          </tr>
+        </table>
+        <hr>
       </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
   </div>
+</div>
 
 {% endblock %}
