@@ -136,8 +136,8 @@ def tags():
     cur = mysql.connection.cursor()
     cur.execute("select tagname, question_count, description from Tag")
     tags = cur.fetchall()
-
-    return render_template('tags.html', tags=tags)
+    tag_list = convert_to_four_column_bootstrap_renderable_list(tags)
+    return render_template('tags.html', tag_list=tag_list)
 
 @app.route('/tag_search', methods=['POST'])
 def tag_search():
@@ -146,5 +146,6 @@ def tag_search():
         cur = mysql.connection.cursor()
         tag_query = "select tagname, question_count, description from Tag where tagname like '%{}%'".format(query)
         cur.execute(tag_query)
-        tagDetail = cur.fetchall()
-        return render_template('', tags=tagDetail)
+        tags = cur.fetchall()
+        tag_list = convert_to_four_column_bootstrap_renderable_list(tags)
+        return render_template('tag_search.html', tag_list=tag_list, query=query)
