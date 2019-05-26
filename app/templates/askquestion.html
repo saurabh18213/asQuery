@@ -1,4 +1,129 @@
 {% extends 'base.html' %}
+{% block include %}
+    <script>
+
+        function Deletetag_tagname(tagname)
+        {   
+            tags = document.getElementById("insertedTags").getElementsByTagName("a");
+            console.log(tags);
+            var index = -1;
+
+            for(i = 0; i < tags.length; i++)
+            {   
+                if(tags[i].innerText == tagname)
+                    index = i;
+            }
+            
+            
+            if (index > -1) {
+                document.getElementById("insertedTags").getElementsByTagName("li").splice(index, 1);
+            }
+
+            str = document.getElementById("dbtags").value; 
+            var words = str.split(" ");
+            var index = words.indexOf(tagname);
+            
+            if (index > -1) {
+                words.splice(index, 1);
+            }
+
+            document.getElementById("dbtags").value = words.join(" ");
+            console.log(document.getElementById("dbtags").value); 
+        }
+
+        function Addtag_tagname(tagname)
+        {
+            tags = document.getElementById("insertedTags").getElementsByTagName("li");
+            
+            for(i = 0; i < tags.length; i++)
+            {   
+                if(tags[i].innerText == tagname)
+                    return;
+            }
+
+            li = document.createElement('li');
+            li.className = 'list-group-item';
+            text = '<a href="/tag/' + tagname  + '">' + tagname + '</a>';
+            text += '<button type="button" class="btn" onclick="Deletetag_tagname(\'' + tagname +'\')">';
+            text += 'X</button>';
+            li.innerHTML = text;
+            document.getElementById("insertedTags").appendChild(li);
+            str = document.getElementById("dbtags").value; 
+
+            if(str != "")
+                str += ' ' + tagname;
+            else
+                str = tagname;    
+            console.log(str);
+            document.getElementById("dbtags").value = str;
+        }
+
+        function givetags(){
+            tag = document.getElementById('tag').value;
+            $.post('/tag_match', {
+                tag: tag,
+            }).done(function(response) {
+                console.log(response['tags']);
+                similarTags = document.getElementById('similarTags');
+                similarTags.innerHTML = '';
+                size = response['tags'].length;
+                
+                if(size <= 3){
+                    var div = document.createElement('div');
+                    div.className = 'row';
+                    text = "";
+
+                    for(i = 0; i < size; i++)
+                    {
+                        text += '<div class="col-sm-4">';
+                        text += '<button type="button" class="btn" onclick="Addtag_tagname(\'' + response['tags'][i]['tagname'] +'\')">';
+                        text += response['tags'][i]['tagname'] + '</button><br>';
+                        text += '<p>' + response['tags'][i]['description'] + '</p>';
+                        text += '</div>';
+                    }
+                    
+                    div.innerHTML = text;
+                    similarTags.appendChild(div);
+                }
+
+                else{
+                    var div = document.createElement('div');
+                    div.className = 'row';
+                    text = "";
+
+                    for(i = 0; i < 3; i++)
+                    {
+                        text += '<div class="col-sm-4">';
+                        text += '<button type="button" class="btn" onclick="Addtag_tagname(\'' + response['tags'][i]['tagname'] +'\')">';
+                        text += response['tags'][i]['tagname'] + '</button><br>';
+                        text += '<p>' + response['tags'][i]['description'] + '</p>';
+                        text += '</div>';
+                    }
+
+                    div.innerHTML = text;
+                    similarTags.appendChild(div);
+                    div1 = document.createElement('div');
+                    div1.className = 'row';
+                    text = "";
+
+                    for(i = 3; i < size; i++)
+                    {
+                        text += '<div class="col-sm-4">';
+                        text += '<button type="button" class="btn" onclick="Addtag_tagname(\'' + response['tags'][i]['tagname'] +'\')">';
+                        text += response['tags'][i]['tagname'] + '</button><br>';
+                        text += '<p>' + response['tags'][i]['description'] + '</p>';
+                        text += '</div>';
+                    }
+
+                    div1.innerHTML = text;
+                    similarTags.appendChild(div1);
+                }
+            }).fail(function() {
+                $(similarTags).text("Error: Could not contact server.");
+            });
+        }
+    </script>
+{% endblock %}
 {% block content %}
 <div class="middle">
     <h2>Ask a Question</h2>
@@ -18,21 +143,20 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
+        <h3>Tags Added</h3>
+        <ul id="insertedTags" class="list-group">
+            
+        </ul>
+        <div class="form-group">
+            <label for="tags">Add Tag</label>
+            <input type="text" class="form-control" id="tag" name="tag" onkeyup="givetags()">
+            <br><br>
+            <div class="container" id="similarTags"></div>
+            <br>
+            <!-- <button type="button" class="btn" onclick="Addtag()">add tag</button> -->
+            <input type="text" style="visibility: hidden" id="dbtags" name="tags">
+        </div>
         <p>{{ form.submit() }}</p>
     </form>
     </div>
-    
-<!-- <form action="/newquestion" method="POST">
-    <div class="form-group">
-      <label for="title">Title</label>
-      <input type="text" class="form-control" id="title" name="title">
-    </div>
-    <div class="form-group">
-      <label for="pwd">Question Body</label>
-      <textarea class="form-control"></textarea>
-    </div>
-    
-    <button type="submit" class="btn btn-default">Submit</button>
-  </form> 
-  </div> -->
 {% endblock %}

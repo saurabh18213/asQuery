@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, session, request, url_for
+from flask import render_template, flash, redirect, session, request, url_for, jsonify
 from app import app
 from flask_mysqldb import MySQL
 from app.forms import *
@@ -109,6 +109,7 @@ def askquestion():
             cur.execute(find_question)
             qid = cur.fetchone()
             print (qid['max(question_id)'])
+            # print(request.form['tags'])
             return redirect('/question/{}'.format(qid['max(question_id)']))
         return render_template('askquestion.html', form=form)
     return redirect(url_for('login'))
@@ -179,3 +180,13 @@ def tag_search():
         tags = cur.fetchall()
         tag_list = convert_to_four_column_bootstrap_renderable_list(tags)
         return render_template('tag_search.html', tag_list=tag_list, query=query)
+
+
+@app.route('/tag_match', methods=['POST'])
+def tag_match():
+    tag = request.form['tag']
+    cur = mysql.connection.cursor()
+    tag_query = "select tagname, description from Tag where tagname like '%{}%' LIMIT 6;".format(tag)
+    cur.execute(tag_query)
+    tags = cur.fetchall()
+    return jsonify({'tags':tags})
