@@ -104,12 +104,27 @@ def askquestion():
             cur = mysql.connection.cursor()
             create_question = "INSERT INTO Question (status, content, title, userid) values (0, '{}', '{}', {})".format(form.body.data, form.title.data, session['user']['userid'])
             cur.execute(create_question)
+            tags = request.form['dbtags']
+            # print(tags)
+            tags = tags.split()
             mysql.connection.commit()
             find_question = "select max(question_id) from Question"
             cur.execute(find_question)
             qid = cur.fetchone()
-            print (qid['max(question_id)'])
-            # print(request.form['tags'])
+            cur = mysql.connection.cursor()
+            # print(tags)
+
+            for tag in tags:
+                cquery = "select * from Tag where tagname='" + tag + "';"
+                cur.execute(cquery)
+                ctag = cur.fetchall()
+                # print(ctag)
+
+                if ctag:
+                    tag_query = "Insert into Tagged(Tagname, question_id) values ('" + tag + "', " + str(qid['max(question_id)']) + ");"
+                    cur.execute(tag_query)
+
+            mysql.connection.commit()
             return redirect('/question/{}'.format(qid['max(question_id)']))
         return render_template('askquestion.html', form=form)
     return redirect(url_for('login'))

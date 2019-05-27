@@ -58,7 +58,7 @@
             $.post('/tag_match', {
                 tag: tag,
             }).done(function(response) {
-                console.log(response['tags']);
+                // console.log(response['tags']);
                 similarTags = document.getElementById('similarTags');
                 similarTags.innerHTML = '';
                 size = response['tags'].length;
@@ -150,7 +150,7 @@
             <div class="container" id="similarTags"></div>
             <br>
             <!-- <button type="button" class="btn" onclick="Addtag()">add tag</button> -->
-            <input type="text" style="visibility: hidden" id="dbtags" name="tags">
+            <input type="text" style="visibility: hidden" id="dbtags" name="dbtags">
         </div>
         <p>{{ form.submit() }}</p>
     </form>
