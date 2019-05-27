@@ -28,7 +28,7 @@ class User():
 
     def __init__(self, email):
         cur = mydb.cursor()
-        query = "select password, userid, username  from User where email = '" + email +  "';"
+        query = "select password, userid, username, reputation  from User where email = '" + email +  "';"
         cur.execute(query)
         result = cur.fetchone()
         self.email = email
@@ -41,6 +41,7 @@ class User():
         self.userid = result[1]
         self.email = email
         self.username = result[2]
+        self.reputation = result[3]
         return
 
     def set_authentication(self, password):

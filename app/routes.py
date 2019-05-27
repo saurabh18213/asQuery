@@ -205,3 +205,39 @@ def tag_match():
     cur.execute(tag_query)
     tags = cur.fetchall()
     return jsonify({'tags':tags})
+
+@app.route('/upvote', methods=['POST'])
+def upvote():
+    if 'user' in session:
+        if session['user']['reputation']>=5:
+            qid = request.form['question_id']
+            cur = mysql.connection.cursor()
+            query = "update Question set upvotes = upvotes + 1 where question_id = {};".format(qid)
+            cur.execute(query)
+            mysql.connection.commit()
+            query = "insert into Question_votes values ({}, {}, {});".format(qid, session['user']['userid'], 0)
+            cur.execute(query)
+            mysql.connection.commit()
+            query = "select upvotes, downvotes from Question where question_id = {};".format(qid)
+            cur.execute(query)
+            response = cur.fetchone()
+            print (response)
+            return '{}'.format(response['upvotes']-response['downvotes'])
+
+@app.route('/downvote', methods=['POST'])
+def downvote():
+    if 'user' in session:
+        if session['user']['reputation']>=10:
+            qid = request.form['question_id']
+            cur = mysql.connection.cursor()
+            query = "update Question set downvotes = downvotes + 1 where question_id = {};".format(qid)
+            cur.execute(query)
+            mysql.connection.commit()
+            query = "insert into Question_votes values ({}, {}, {});".format(qid, session['user']['userid'], 1)
+            cur.execute(query)
+            mysql.connection.commit()
+            query = "select upvotes, downvotes from Question where question_id = {};".format(qid)
+            cur.execute(query)
+            response = cur.fetchone()
+            print (response)
+            return '{}'.format(response['upvotes']-response['downvotes'])
