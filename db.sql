@@ -49,33 +49,6 @@ LOCK TABLES `Answer` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `Answer_Upvotes`
---
-
-DROP TABLE IF EXISTS `Answer_Upvotes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `Answer_Upvotes` (
-  `question_id` int(11) NOT NULL,
-  `answer_id` int(11) NOT NULL,
-  `userid` int(11) NOT NULL,
-  PRIMARY KEY (`question_id`,`answer_id`,`userid`),
-  KEY `userid` (`userid`),
-  CONSTRAINT `Answer_Upvotes_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `Question` (`question_id`),
-  CONSTRAINT `Answer_Upvotes_ibfk_2` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Answer_Upvotes`
---
-
-LOCK TABLES `Answer_Upvotes` WRITE;
-/*!40000 ALTER TABLE `Answer_Upvotes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Answer_Upvotes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `Answer_votes`
 --
 
@@ -101,30 +74,6 @@ CREATE TABLE `Answer_votes` (
 LOCK TABLES `Answer_votes` WRITE;
 /*!40000 ALTER TABLE `Answer_votes` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Answer_votes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Moderator`
---
-
-DROP TABLE IF EXISTS `Moderator`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `Moderator` (
-  `userid` int(11) NOT NULL,
-  `moderator_since` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`userid`),
-  CONSTRAINT `Moderator_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Moderator`
---
-
-LOCK TABLES `Moderator` WRITE;
-/*!40000 ALTER TABLE `Moderator` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Moderator` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -156,32 +105,6 @@ CREATE TABLE `Question` (
 LOCK TABLES `Question` WRITE;
 /*!40000 ALTER TABLE `Question` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Question` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Question_Upvotes`
---
-
-DROP TABLE IF EXISTS `Question_Upvotes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `Question_Upvotes` (
-  `question_id` int(11) NOT NULL,
-  `userid` int(11) NOT NULL,
-  PRIMARY KEY (`question_id`,`userid`),
-  KEY `userid` (`userid`),
-  CONSTRAINT `Question_Upvotes_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `Question` (`question_id`) ON DELETE CASCADE,
-  CONSTRAINT `Question_Upvotes_ibfk_2` FOREIGN KEY (`userid`) REFERENCES `User` (`userid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Question_Upvotes`
---
-
-LOCK TABLES `Question_Upvotes` WRITE;
-/*!40000 ALTER TABLE `Question_Upvotes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Question_Upvotes` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

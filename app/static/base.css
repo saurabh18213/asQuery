@@ -149,3 +149,7 @@
 #down-btn:hover{
   background-color:  #ff1a1a;
 }
+
+.btn-disabled {
+  background-color: #a3b1a3 !important;
+}
