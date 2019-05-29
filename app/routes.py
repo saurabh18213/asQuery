@@ -39,17 +39,28 @@ def newest():
     cur.execute("commit;")
     return render_template('home.html', questions=questions)
 
+@app.route('/popular')
+def popular():
+    cur = mysql.connection.cursor()
+    cur.execute('''select Q.question_id, Q.status, 
+    Q.upvotes, Q.downvotes, Q.asked_at, Q.title,  Q.content, Q.userid,
+    (select count(*) from Answer A where A.question_id = Q.question_id)
+    as answer_count, ( select U.username from User U where U.userid = Q.userid) 
+    as username from Question Q order by (Q.upvotes-Q.downvotes) desc;''')
+    questions = cur.fetchall()
+    return render_template('home.html', questions=questions)
+
 @app.route('/question/<int:id>', methods=['GET', 'POST'])
 def question(id):
     form = AnswerForm()
     if form.validate_on_submit():
         cur = mysql.connection.cursor()
-        create_question = "INSERT INTO Answer (content, question_id, userid) values ('{}', {}, {})".format(form.answer.data, id, session['user']['userid'])
-        cur.execute(create_question)
+        create_question = "INSERT INTO Answer (content, question_id, userid) values (%s, %s, %s)"
+        cur.execute(create_question, [form.answer.data, id, session['user']['userid']])
         mysql.connection.commit()
         return redirect('/question/{}'.format(id))
     cur = mysql.connection.cursor()
-    question_query = "select Q.title, Q.content, Q.upvotes, Q.downvotes, Q.asked_at, Q.userid, (select U.username from User U where U.userid = Q.userid) as username, (select count(*) from Answer A where A.question_id = Q.question_id) as answer_count from Question Q where Q.question_id = {}".format(id)
+    question_query = "select Q.question_id, Q.title, Q.content, Q.upvotes, Q.downvotes, Q.asked_at, Q.userid, (select U.username from User U where U.userid = Q.userid) as username, (select count(*) from Answer A where A.question_id = Q.question_id) as answer_count from Question Q where Q.question_id = {}".format(id)
     cur.execute(question_query)
     questionDetail = cur.fetchone()
     # print(questionDetail)
@@ -64,13 +75,13 @@ def search():
     if request.method == 'POST':
         query = request.form['search']
         cur.execute("start transaction read only;")
+        query2 = '%' + request.form['search'] + '%'
         cur = mysql.connection.cursor()
-        question_query = "select Q.title, Q.content, Q.upvotes, Q.downvotes, Q.asked_at, Q.userid, Q.question_id, (select U.username from User U where U.userid = Q.userid) as username, (select count(*) from Answer A where A.question_id = Q.question_id) as answer_count from Question Q where Q.title like '%{}%'".format(query)
-        cur.execute(question_query)
+        question_query = "select Q.title, Q.content, Q.upvotes, Q.downvotes, Q.asked_at, Q.userid, Q.question_id, (select U.username from User U where U.userid = Q.userid) as username, (select count(*) from Answer A where A.question_id = Q.question_id) as answer_count from Question Q where Q.title like %s"
+        cur.execute(question_query, [query2])
         questionDetail = cur.fetchall()
         cur.execute("commit;")
         return render_template('searchresults.html', questions=questionDetail, searchquery = query)
-
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -108,8 +119,8 @@ def askquestion():
         form = AskQuestion() 
         if form.validate_on_submit():
             cur = mysql.connection.cursor()
-            create_question = "INSERT INTO Question (status, content, title, userid) values (0, '{}', '{}', {})".format(form.body.data, form.title.data, session['user']['userid'])
-            cur.execute(create_question)
+            create_question = "INSERT INTO Question (status, content, title, userid) values (0, %s, %s, %s)"
+            cur.execute(create_question, [form.body.data, form.title.data, session['user']['userid']])
             tags = request.form['dbtags']
             # print(tags)
             tags = tags.split()
@@ -248,13 +259,42 @@ def downvote():
         if session['user']['reputation']>=10:
             qid = request.form['question_id']
             cur = mysql.connection.cursor()
-            #query = "update Question set downvotes = downvotes + 1 where question_id = {};".format(qid)
-            #cur.execute(query)
-            #mysql.connection.commit()
             query = "call QuestionVote({}, {}, {});".format(session['user']['userid'],qid, 1)
             cur.execute(query)
             mysql.connection.commit()
             query = "select upvotes, downvotes from Question where question_id = {};".format(qid)
+            cur.execute(query)
+            response = cur.fetchone()
+            print (response)
+            return '{}'.format(response['upvotes']-response['downvotes'])
+
+@app.route('/upvoteanswer', methods=['POST'])
+def upvoteAnswer():
+    if 'user' in session:
+        if session['user']['reputation']>=5:
+            qid = request.form['question_id']
+            aid = request.form['answer_id']
+            cur = mysql.connection.cursor()
+            query = "call AnswerVote({}, {}, {},{});".format(session['user']['userid'], qid, aid, 0)
+            cur.execute(query)
+            mysql.connection.commit()
+            query = "select upvotes, downvotes from Answer where question_id = {} and answer_id = {};".format(qid, aid)
+            cur.execute(query)
+            response = cur.fetchone()
+            print (response)
+            return '{}'.format(response['upvotes']-response['downvotes'])
+
+@app.route('/downvoteanswer', methods=['POST'])
+def downvoteA():
+    if 'user' in session:
+        if session['user']['reputation']>=10:
+            qid = request.form['question_id']
+            aid = request.form['answer_id']
+            cur = mysql.connection.cursor()
+            query = "call AnswerVote({}, {}, {},{});".format(session['user']['userid'],qid, aid, 1)
+            cur.execute(query)
+            mysql.connection.commit()
+            query = "select upvotes, downvotes from Answer where question_id = {} and answer_id = {};".format(qid, aid)
             cur.execute(query)
             response = cur.fetchone()
             print (response)
