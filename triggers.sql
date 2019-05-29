@@ -84,3 +84,13 @@ BEGIN
         Update Answer set Answer.downvotes = Answer.downvotes - 1 where Answer.question_id = OLD.question_id and Answer.answer_id = OLD.answer_id;
     END IF;
 END$$
+
+Delimiter $$
+CREATE TRIGGER Userdelete
+    before delete on User
+    FOR EACH ROW 
+BEGIN
+        Delete from Question_votes where Question_votes.userid = OLD.userid;
+        Delete from Answer_votes where Answer_votes.userid = OLD.userid;    
+END$$
+DELIMITER ;
