@@ -1,5 +1,35 @@
 {% extends 'base.html' %}
 
+{% block include %}
+    <script>
+
+        function upvote(question_id, answer_id){
+            $.post('/upvoteanswer', {
+                question_id: question_id,
+                answer_id: answer_id
+            }).done(function(response) {
+                let spanid = "voteC_" + answer_id; 
+                console.log(response);
+                document.getElementById(spanid).innerText = parseInt(response);
+            }).fail(function() {
+                
+            });
+        }
+        function downvote(question_id, answer_id){
+            $.post('/downvoteanswer', {
+                question_id: question_id,
+                answer_id: answer_id
+            }).done(function(response) {
+                let spanid = "voteC_" + answer_id; 
+                console.log(response);
+                document.getElementById(spanid).innerText = parseInt(response);
+            }).fail(function() {
+                
+            });
+        }
+    </script>
+{% endblock %}
+
 {% block content %}
     
     <div class="middle">
@@ -20,10 +50,14 @@
 
         <br>
         Answered by : <a href="/user/{{ answer.userid }}">{{ answer.username }}</a>
-        <br>        
-        {% if session.get('user') %}<button type="button" class="btn btn-default" name="Newest">Upvote</button>{% endif %}
-        <a href="#">{{ answer.upvotes - answer.downvotes}}</a>
-        {% if session.get('user') %}<button type="button" class="btn btn-default" name="Newest">Downvote</button>{% endif %}
+        <br>    
+        <span id="voteC_{{ loop.index }}">{{ answer.upvotes - answer.downvotes}}</span>    
+        {% if session.get('user') %}
+        {% if session.get('user')['reputation']>4 %}<button type="button" onclick="upvote('{{ question.question_id }}','{{ loop.index }}')" id="up-btn" class="btn btn-success glyphicon glyphicon-thumbs-up" ></button>
+        {% else %} <button type="button" id="up-btn" title="Not enough reputation" class="btn btn-success glyphicon glyphicon-thumbs-up btn-disabled" ></button>{% endif %}
+        {% if session.get('user')['reputation']>=10 %}<button type="button" onclick="downvote('{{ question.question_id }}','{{ loop.index }}')" id="down-btn" class="btn btn-success glyphicon glyphicon-thumbs-down" ></button>
+        {% else %} <button type="button" id="down-btn" title="Not enough reputation" class="btn btn-success glyphicon glyphicon-thumbs-down btn-disabled" ></button>{% endif %}{% endif %}
+        
 
       </div>
       <br>
