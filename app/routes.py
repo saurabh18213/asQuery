@@ -64,7 +64,7 @@ def question(id):
     cur.execute(question_query)
     questionDetail = cur.fetchone()
     # print(questionDetail)
-    answer_query = "select A.question_id, A.content, A.upvotes, A.downvotes, A.answered_at, (select U.userid from User U where U.userid = A.userid) as userid,  (select U.username from User U where U.userid = A.userid) as username from Answer A where A.question_id = {}".format(id) 
+    answer_query = "select A.question_id, A.answer_id, A.content, A.upvotes, A.downvotes, A.answered_at, (select U.userid from User U where U.userid = A.userid) as userid,  (select U.username from User U where U.userid = A.userid) as username from Answer A where A.question_id = {}".format(id) 
     cur.execute(answer_query)
     answerDetail = cur.fetchall()
     #print(answerDetail)
