@@ -230,10 +230,10 @@ def upvote():
         if session['user']['reputation']>=5:
             qid = request.form['question_id']
             cur = mysql.connection.cursor()
-            query = "update Question set upvotes = upvotes + 1 where question_id = {};".format(qid)
-            cur.execute(query)
-            mysql.connection.commit()
-            query = "insert into Question_votes values ({}, {}, {});".format(qid, session['user']['userid'], 0)
+            #query = "update Question set upvotes = upvotes + 1 where question_id = {};".format(qid)
+            #cur.execute(query)
+            #mysql.connection.commit()
+            query = "call QuestionVote({}, {}, {});".format(session['user']['userid'], qid, 0)
             cur.execute(query)
             mysql.connection.commit()
             query = "select upvotes, downvotes from Question where question_id = {};".format(qid)
@@ -248,10 +248,10 @@ def downvote():
         if session['user']['reputation']>=10:
             qid = request.form['question_id']
             cur = mysql.connection.cursor()
-            query = "update Question set downvotes = downvotes + 1 where question_id = {};".format(qid)
-            cur.execute(query)
-            mysql.connection.commit()
-            query = "insert into Question_votes values ({}, {}, {});".format(qid, session['user']['userid'], 1)
+            #query = "update Question set downvotes = downvotes + 1 where question_id = {};".format(qid)
+            #cur.execute(query)
+            #mysql.connection.commit()
+            query = "call QuestionVote({}, {}, {});".format(session['user']['userid'],qid, 1)
             cur.execute(query)
             mysql.connection.commit()
             query = "select upvotes, downvotes from Question where question_id = {};".format(qid)

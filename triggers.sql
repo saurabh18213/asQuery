@@ -11,28 +11,40 @@ BEGIN
 END$$
 DELIMITER ;
 
+create procedure QuestionVote (IN userid INT, IN question_id INT, IN type INT)
+    BEGIN 
+    IF EXISTS(select * from Question_votes Q where Q.userid=uid and Q.question_id=qid)
+    THEN delete from Question_votes Q where Q.userid=uid and Q.question_id=qid;
+    ELSE insert into Question_votes values (qid, uid, type); 
+    END IF;
+    END?
+
 Delimiter $$
-CREATE TRIGGER before_upvote
+CREATE TRIGGER insertQvote
     before insert on Question_votes
     FOR EACH ROW 
 BEGIN
-    IF (NEW.type == 0) THEN
+    IF (NEW.type = 0) THEN
         Update User set User.reputation = User.reputation + 2 where User.userid=(select userid from Question where Question.question_id = NEW.question_id); 
+        Update Question set Question.upvotes = Question.upvotes + 1 where Question.question_id = NEW.question_id;
     ELSE
         Update User set User.reputation = User.reputation - 1 where User.userid=(select userid from Question where Question.question_id = NEW.question_id);
+        Update Question set Question.downvotes = Question.downvotes + 1 where Question.question_id = NEW.question_id;
     END IF;    
 END$$
 DELIMITER ;
 
 Delimiter $$
-CREATE TRIGGER before_answer_vote
-    before insert on Answer_votes
+CREATE TRIGGER deleteQvote
+    before delete on Question_votes
     FOR EACH ROW 
 BEGIN
-    IF (NEW.type == 0) THEN
-        Update User set User.reputation = User.reputation + 2 where User.userid=(select userid from Answer where Answer.question_id = NEW.question_id and Answer.answer_id = NEW.answer_id); 
+    IF (OLD.type = 0) THEN
+        Update User set User.reputation = User.reputation - 2 where User.userid=(select userid from Question where Question.question_id = OLD.question_id); 
+        Update Question set Question.upvotes = Question.upvotes - 1 where Question.question_id = OLD.question_id;
     ELSE
-        Update User set User.reputation = User.reputation + 2 where User.userid=(select userid from Answer where Answer.question_id = NEW.question_id and Answer.answer_id = NEW.answer_id); 
+        Update User set User.reputation = User.reputation + 1 where User.userid=(select userid from Question where Question.question_id = OLD.question_id);
+        Update Question set Question.downvotes = Question.downvotes - 1 where Question.question_id = OLD.question_id;
     END IF;    
 END$$
 DELIMITER ;
