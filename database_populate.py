@@ -24,28 +24,25 @@ def answer_insert_vals(n, m, t):
 
 mycursor = mydb.cursor()
 
-for i in range(1, 50):
+for i in range(1, 500):
     mycursor.execute(user_insert_str, user_insert_vals(i))
 
 k = 0
 
-for i in range(1, 50):
+for i in range(1, 500):
     for j in range(1, 10):
         k = k + 1   
         mycursor.execute(question_insert_str, question_insert_vals(k, i))
 
-k = 0
+for i in range(1, 4482):
+    for j in range(1, 10):
+        mycursor.execute(answer_insert_str, answer_insert_vals(j, i, (i + j) % 497 + 1))
 
-for i in range(1, 442):
-    for j in range(1, 4):
-        k = k + 1   
-        mycursor.execute(answer_insert_str, answer_insert_vals(k, i, (i + j) % 9 + 1))
-
-for i in range(1, 26):
+for i in range(1, 260):
 	mycursor.execute(tag_insert_str, ("tag" + str(i), "description of tag" + str(i)))
 
-for i in range(1, 50):
-    for j in range(1, 9):
+for i in range(1, 260):
+    for j in range(1, 15):
         mycursor.execute(tagged_insert_str,("tag" + str(i), j * i))
 
 mydb.commit()
