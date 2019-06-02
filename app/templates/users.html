@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block include %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='users.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="middle">
+  <br><br>
+  <div class="container">
+    <div class="row">
+    <h2>Users</h2>
+    </div>
+    <br>
+    <div class="row">
+        <form class="navbar-form navbar-left" method="POST" action="/user_search">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Filter by user" name="search" >
+            <div class="input-group-btn">
+              <button class="btn btn-default" type="submit">
+                <i class="glyphicon glyphicon-search"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+    </div>
+    <br><br>
+    {% for users in user_list %}
+    <div class="row">
+      {% for user in users %}
+      <div class="col-sm-3">
+        <table>
+          <tr>
+          <th><img src="{{ url_for('static', filename='profile.png') }}" alt="" height="60px" width="60px;"></th>
+          <th><a href="/user/{{ user.userid }}">{{ user.username }}</a><br><span>&#11088;</span>{{ user.reputation }}<br> User since {{ user.user_since.strftime('%Y-%m-%d') }}</th>
+          </tr>
+        </table>
+        <hr>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

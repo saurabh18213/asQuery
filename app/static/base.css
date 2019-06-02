@@ -1,0 +1,155 @@
+.center-area{
+  padding-top: 50px;
+  height: 100%;
+  padding-bottom: 50px;
+}
+
+.quesdetails{
+  text-align: center;
+  border-radius: 20px;
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.question{
+  padding: 10px;
+  background-color: antiquewhite
+}
+
+.sidebar {
+  left: 0%;
+  padding-top: 24px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  width: 15%;
+  overflow: auto;
+  text-align: left;
+  padding-left: 5%;
+  border-right: 1px solid black;
+}
+.sidebar a{
+ color: black;
+ font-size: 20px;
+
+}
+.sidebar a:hover{
+  text-decoration: none;
+  color: 	#9932CC;
+  transition: background-color .5s;
+}
+
+.choose table{
+  float: right;
+}
+.choose table, tr, th{
+  /*border: 1px solid black*/
+  height: 30px;
+  padding-right: 100px;
+}
+.choose button{
+  border:2px solid black;
+  border-color: #737373;
+  border-radius: 0px;
+}
+.choose button:hover{
+  background-color:#ffff99;
+  color: black;
+  border-color: black;
+  transition: background-color .5s;
+}
+
+.middle{
+   padding-top: 24px;
+   max-width: 1100px;
+   width: 80%;
+   margin-left: calc(18%);
+   border-left-width: 2px;
+  /*background-color:  #FAFAD2;*/
+}
+
+
+.right-sidebar{
+  float: right;
+  padding-top: 24px;
+  width: 22%;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-right: 0%;
+}
+.other-tags a{
+  color: black;
+  background-color:  #ccffcc;
+  border-radius: 5px;
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.other-tags a:hover{
+  text-decoration: none;
+  color: black;
+  background-color:#99ff99;
+  transition: background-color .5s;
+}
+.other-links a{
+  color:#006633;
+}
+.other-links a:hover{
+  color:  #00cc66;
+  text-decoration: none;
+  transition: color .4s;
+}
+
+.question-box{
+  background-color: #f1f1f1;
+  padding-top: 12px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-bottom: 12px;
+  /* max-height: 64px; */
+}
+
+.answer-box{
+  background-color: #f1f1f1;
+  padding-top: 12px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-bottom: 12px;
+}
+
+.question-box th, tr{
+  padding-left: 10px;
+  padding-right: 10px;
+
+}
+.left-cell{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  text-decoration: none;
+}
+.right-cell{
+  padding-bottom: 10px;
+}
+.right-cell a:hover{
+  text-decoration: none;
+  transition: color .4s;
+}
+.asked-by a:hover{
+  text-decoration: none;
+  transition: background-color .4s;
+}
+.asked-by button{
+  float: right;
+}
+#down-btn{
+  background-color: #ff4d4d;
+}
+#down-btn:hover{
+  background-color:  #ff1a1a;
+}
+
+.btn-disabled {
+  background-color: #a3b1a3 !important;
+}

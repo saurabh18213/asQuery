@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block include %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='tags.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!--Send only 90 characters when you send content for a tag through dictionary-->
+
+  <div class="middle">
+    <div class="container">  
+        <div class="row">
+        <h3>Showing Tags with name like {{ query }}</h2>
+        </div>
+        <br><br>
+        {% for tags in tag_list %}
+        <div class="row">
+            {% for tag in tags %}
+            <div class="col-sm-3"><div class="tag-box"> <a href="/tag/{{ tag.tagname }}">{{ tag.tagname }}</a> <span>&#215;</span>{{ tag.question_count }}<br>
+            <div class="tag-matter">
+                {{ tag.description }}
+            </div>
+            </div> <hr></div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+  </div>
+  
+
+{% endblock %}

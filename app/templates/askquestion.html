@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block include %}
+    <script>
+
+        function Deletetag_tagname(tagname)
+        {   
+            elem = document.getElementById('tagname=' + tagname);
+            elem.parentNode.removeChild(elem);
+            str = document.getElementById("dbtags").value; 
+            var words = str.split(" ");
+            var index = words.indexOf(tagname);
+            
+            if (index > -1) {
+                words.splice(index, 1);
+            }
+
+            document.getElementById("dbtags").value = words.join(" ");
+            console.log(document.getElementById("dbtags").value); 
+        }
+
+        function Addtag_tagname(tagname)
+        {
+            tags = document.getElementById("insertedTags").getElementsByClassName("tag");
+        
+            for(i = 0; i < tags.length; i++)
+            {   
+                if(tags[i].innerText == tagname)
+                    return;
+            }
+
+            div = document.createElement('div');
+            div1 = document.createElement('div');
+            div2 = document.createElement('div');
+            div.className = 'row';
+            div.id = 'tagname=' + tagname;
+            div1.className = 'tag col-sm-1';
+            div2.className = 'col-sm-1';
+            text1 = '<a href="/tag/' + tagname  + '">' + tagname + '</a>';
+            text2 = '<button type="button" class="btn" onclick="Deletetag_tagname(\'' + tagname +'\')">';
+            text2 += 'X</button> <br> <br>';
+            div1.innerHTML = text1;
+            div2.innerHTML = text2;
+            div.appendChild(div1);
+            div.appendChild(div2);
+            document.getElementById("insertedTags").appendChild(div);
+            str = document.getElementById("dbtags").value; 
+
+            if(str != "")
+                str += ' ' + tagname;
+            else
+                str = tagname;    
+            console.log(str);
+            document.getElementById("dbtags").value = str;
+        }
+
+        function givetags(){
+            tag = document.getElementById('tag').value;
+            $.post('/tag_match', {
+                tag: tag,
+            }).done(function(response) {
+                // console.log(response['tags']);
+                similarTags = document.getElementById('similarTags');
+                similarTags.innerHTML = '';
+                size = response['tags'].length;
+                
+                if(size <= 3){
+                    var div = document.createElement('div');
+                    div.className = 'row';
+                    text = "";
+
+                    for(i = 0; i < size; i++)
+                    {
+                        text += '<div class="col-sm-4">';
+                        text += '<button type="button" class="btn" onclick="Addtag_tagname(\'' + response['tags'][i]['tagname'] +'\')">';
+                        text += response['tags'][i]['tagname'] + '</button><br>';
+                        text += '<p>' + response['tags'][i]['description'] + '</p>';
+                        text += '</div>';
+                    }
+                    
+                    div.innerHTML = text;
+                    similarTags.appendChild(div);
+                }
+
+                else{
+                    var div = document.createElement('div');
+                    div.className = 'row';
+                    text = "";
+
+                    for(i = 0; i < 3; i++)
+                    {
+                        text += '<div class="col-sm-4">';
+                        text += '<button type="button" class="btn" onclick="Addtag_tagname(\'' + response['tags'][i]['tagname'] +'\')">';
+                        text += response['tags'][i]['tagname'] + '</button><br>';
+                        text += '<p>' + response['tags'][i]['description'] + '</p>';
+                        text += '</div>';
+                    }
+
+                    div.innerHTML = text;
+                    similarTags.appendChild(div);
+                    div1 = document.createElement('div');
+                    div1.className = 'row';
+                    text = "";
+
+                    for(i = 3; i < size; i++)
+                    {
+                        text += '<div class="col-sm-4">';
+                        text += '<button type="button" class="btn" onclick="Addtag_tagname(\'' + response['tags'][i]['tagname'] +'\')">';
+                        text += response['tags'][i]['tagname'] + '</button><br>';
+                        text += '<p>' + response['tags'][i]['description'] + '</p>';
+                        text += '</div>';
+                    }
+
+                    div1.innerHTML = text;
+                    similarTags.appendChild(div1);
+                }
+            }).fail(function() {
+                $(similarTags).text("Error: Could not contact server.");
+            });
+        }
+    </script>
+{% endblock %}
+{% block content %}
+<div class="middle">
+    <h2>Ask a Question</h2>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.title.label }}<br>
+            {{ form.title(size=100) }}<br>
+            {% for error in form.title.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.body.label }}<br>
+            {{ form.body(cols="60", rows="5") }}<br>
+            {% for error in form.body.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <h3>Tags Added</h3>
+        <br><br>
+        <div class="container" id="insertedTags">
+
+        </div>
+        <div class="form-group">
+            <label for="tags">Add Tag</label>
+            <input type="text" class="form-control" id="tag" name="tag" onkeyup="givetags()">
+            <br><br>
+            <div class="container" id="similarTags"></div>
+            <br>
+            <!-- <button type="button" class="btn" onclick="Addtag()">add tag</button> -->
+            <input type="text" style="visibility: hidden" id="dbtags" name="dbtags">
+        </div>
+        <p>{{ form.submit() }}</p>
+    </form>
+    </div>
+{% endblock %}
