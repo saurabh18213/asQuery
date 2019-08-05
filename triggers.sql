@@ -11,13 +11,15 @@ BEGIN
 END$$
 DELIMITER ;
 
+Delimiter $$
 create procedure QuestionVote (IN uid INT, IN qid INT, IN type INT)
     BEGIN 
     IF EXISTS(select * from Question_votes Q where Q.userid=uid and Q.question_id=qid)
     THEN delete from Question_votes Q where Q.userid=uid and Q.question_id=qid;
     ELSE insert into Question_votes values (qid, uid, type); 
     END IF;
-    END?
+    END$$
+DELIMITER ;
 
 Delimiter $$
 CREATE TRIGGER insertQvote
@@ -72,6 +74,7 @@ BEGIN
 END$$
 DELIMITER ;
 
+Delimiter $$
 CREATE TRIGGER deleteAvote
     before delete on Answer_votes
     FOR EACH ROW 
