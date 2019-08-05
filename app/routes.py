@@ -73,10 +73,10 @@ def question(id):
 @app.route('/search', methods=['POST'])
 def search():
     if request.method == 'POST':
+        cur = mysql.connection.cursor()
         query = request.form['search']
         cur.execute("start transaction read only;")
         query2 = '%' + request.form['search'] + '%'
-        cur = mysql.connection.cursor()
         question_query = "select Q.title, Q.content, Q.upvotes, Q.downvotes, Q.asked_at, Q.userid, Q.question_id, (select U.username from User U where U.userid = Q.userid) as username, (select count(*) from Answer A where A.question_id = Q.question_id) as answer_count from Question Q where Q.title like %s"
         cur.execute(question_query, [query2])
         questionDetail = cur.fetchall()
@@ -91,9 +91,12 @@ def signup():
     if form.validate_on_submit():
         CreateUser(form.email.data, form.password.data, form.username.data)
         user = User(form.email.data)
+        print(user)
         user.set_authentication(form.password.data)
-        session['user'] = user.__dict__
-        return redirect('/') 
+        
+        if user.is_authenticated():
+            session['user'] = user.__dict__
+            return redirect('/') 
 
     return render_template('signup.html', title='Sign In', form=form)    
 

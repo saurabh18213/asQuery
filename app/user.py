@@ -12,7 +12,7 @@ user_insert_str = "insert into User(email, password, username) values (%s, %s, %
 
 def CreateUser(email, password, username):
     user_data = (str(email), generate_password_hash(password), str(username))
-    cur = mydb.cursor()
+    cur = mydb.cursor(buffered=True)
     cur.execute(user_insert_str, user_data)
     mydb.commit()
     return
@@ -27,7 +27,7 @@ class User():
     username = ""
 
     def __init__(self, email):
-        cur = mydb.cursor()
+        cur = mydb.cursor(buffered=True)
         query = "select password, userid, username, reputation  from User where email = '" + email +  "';"
         cur.execute(query)
         result = cur.fetchone()

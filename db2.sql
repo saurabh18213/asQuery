@@ -317,7 +317,9 @@ CREATE TABLE `User` (
   `reputation` int(11) DEFAULT '0',
   `user_since` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`userid`),
-  UNIQUE KEY `userid` (`userid`)
+  UNIQUE KEY `userid` (`userid`),
+  KEY `email` (`email`)
+
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
