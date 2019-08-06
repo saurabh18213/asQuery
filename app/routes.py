@@ -91,7 +91,7 @@ def signup():
     if form.validate_on_submit():
         CreateUser(form.email.data, form.password.data, form.username.data)
         user = User(form.email.data)
-        print(user)
+        # print(user)
         user.set_authentication(form.password.data)
         
         if user.is_authenticated():
@@ -111,8 +111,6 @@ def login():
         if user.is_authenticated(): 
             session['user'] = user.__dict__
             return redirect('/') 
-
-        return render_template('login.html', title='Log In', form=form)
 
     return render_template('login.html', title='Log In', form=form)
 
@@ -180,11 +178,11 @@ def users():
 @app.route('/user_search', methods=['POST'])
 def user_search():
     if request.method == 'POST':
-        query = request.form['search']
         cur = mysql.connection.cursor()
         cur.execute("start transaction read only;")
-        user_query = "select username, reputation, userid, user_since from User where username like '%{}%'".format(query)
-        cur.execute(user_query)
+        query2 = '%' + request.form['search'] + '%'
+        user_query = "select username, reputation, userid, user_since from User where username like %s"
+        cur.execute(user_query, [query2])
         users = cur.fetchall()
         cur.execute("commit;")
         user_list = convert_to_four_column_bootstrap_renderable_list(users)
@@ -194,11 +192,11 @@ def user_search():
 def tag(tagname):
     cur = mysql.connection.cursor()
     cur.execute("start transaction read only;")
-    cur.execute("select tagname, question_count, description from Tag where tagname = '" + tagname + "'")
+    cur.execute("select tagname, question_count, description from Tag where tagname = %s", [tagname])
     tag = cur.fetchone()
     cur.execute('''select q.title, q.question_id, q.asked_at, q.upvotes, q.downvotes, q.content, q.userid, (select count(*) from Answer A where A.question_id = q.question_id)
     as answer_count, ( select U.username from User U where U.userid = q.userid) 
-    as username from Question q, Tagged t where t.question_id = q.question_id and t.tagname = "''' + tagname + '''";''')
+    as username from Question q, Tagged t where t.question_id = q.question_id and t.tagname = %s;''', [tagname])
     questions = cur.fetchall()
     cur.execute("commit;")
     return render_template('tag.html', tag=tag, questions=questions)
@@ -219,8 +217,8 @@ def tag_search():
         query = request.form['search']
         cur = mysql.connection.cursor()
         cur.execute("start transaction read only;")
-        tag_query = "select tagname, question_count, description from Tag where tagname like '%{}%'".format(query)
-        cur.execute(tag_query)
+        tag_query = "select tagname, question_count, description from Tag where tagname like %s"
+        cur.execute(tag_query, ['%' + query + '%'])
         tags = cur.fetchall()
         tag_list = convert_to_four_column_bootstrap_renderable_list(tags)
         cur.execute("commit;")
@@ -232,8 +230,8 @@ def tag_match():
     tag = request.form['tag']
     cur = mysql.connection.cursor()
     cur.execute("start transaction read only;")
-    tag_query = "select tagname, description from Tag where tagname like '%{}%' LIMIT 6;".format(tag)
-    cur.execute(tag_query)
+    tag_query = "select tagname, description from Tag where tagname like %s LIMIT 6;"
+    cur.execute(tag_query, ['%' + tag + '%'])
     tags = cur.fetchall()
     cur.execute("commit;")
     return jsonify({'tags':tags})
@@ -262,7 +260,7 @@ def downvote():
         if session['user']['reputation']>=10:
             qid = request.form['question_id']
             cur = mysql.connection.cursor()
-            query = "call QuestionVote({}, {}, {});".format(session['user']['userid'],qid, 1)
+            query = "call QuestionVote({}, {}, {});".format(session['user']['userid'], qid, 1)
             cur.execute(query)
             mysql.connection.commit()
             query = "select upvotes, downvotes from Question where question_id = {};".format(qid)
