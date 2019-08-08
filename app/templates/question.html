@@ -39,11 +39,27 @@
           <p> {{ question.content }} </p><br><br>
           <span>asked by : <a href="/user/{{ question.userid }}">{{ question.username }}</a></span><br>
               <span>asked at : {{ question.asked_at }}</span>
+          
+          <br>
+          <br>
+          <div class="container">
+            <div class="row">
+              {% for tag in tags %}
+                <div class="col-sm-1">
+                  <button class="btn" onclick="location.href='/tag/{{ tag.Tagname }}'">
+                   {{ tag.Tagname }}
+                  </button>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
       </div>
       {% endif %}
       <br>
       {% if answers %}
       <h3> {{ question.answer_count }} Answers </h3>
+
+      {{ pagination.links }}
        {% for answer in answers %}
       <div class="answer-box">
         {{ answer.content }}
@@ -62,6 +78,7 @@
       </div>
       <br>
       {% endfor %}
+      {{ pagination.links }}
       {% endif %}
       {% if session.get('user') %}
       <h2>Post your answer</h2>

@@ -16,7 +16,13 @@ mysql = MySQL(app)
 
 def get_questions(questions, offset=0, per_page=50):
         return questions[offset: offset + per_page]
-    
+
+def get_answers(answers, offset=0, per_page=50):
+        return answers[offset: offset + per_page]
+
+def get_users(users, offset=0, per_page=50):
+        return users[offset: offset + per_page]
+        
 @app.route('/')
 def index():
     cur = mysql.connection.cursor()
@@ -51,7 +57,17 @@ def newest():
     as username from Question Q order by Q.asked_at desc;''')
     questions = cur.fetchall()
     cur.execute("commit;")
-    return render_template('home.html', questions=questions)
+    page, per_page, offset = get_page_args(page_parameter='page',
+                                           per_page_parameter='per_page')
+    per_page = 50
+    offset = (page - 1) * per_page
+#     print(page, per_page, offset)
+    total = len(questions)                                       
+    pagination_questions = get_questions(questions, offset=offset, per_page=per_page)
+    pagination = Pagination(page=page, per_page=per_page, total=total,
+                            css_framework='bootstrap4')                       
+    return render_template('home.html', questions=pagination_questions, page=page,
+                        per_page=per_page, pagination=pagination)
 
 @app.route('/popular')
 def popular():
@@ -62,7 +78,17 @@ def popular():
     as answer_count, ( select U.username from User U where U.userid = Q.userid) 
     as username from Question Q order by (Q.upvotes-Q.downvotes) desc;''')
     questions = cur.fetchall()
-    return render_template('home.html', questions=questions)
+    page, per_page, offset = get_page_args(page_parameter='page',
+                                           per_page_parameter='per_page')
+    per_page = 50
+    offset = (page - 1) * per_page
+#     print(page, per_page, offset)
+    total = len(questions)                                       
+    pagination_questions = get_questions(questions, offset=offset, per_page=per_page)
+    pagination = Pagination(page=page, per_page=per_page, total=total,
+                            css_framework='bootstrap4')                       
+    return render_template('home.html', questions=pagination_questions, page=page,
+                        per_page=per_page, pagination=pagination)
 
 @app.route('/question/<int:id>', methods=['GET', 'POST'])
 def question(id):
@@ -80,9 +106,21 @@ def question(id):
     # print(questionDetail)
     answer_query = "select A.question_id, A.answer_id, A.content, A.upvotes, A.downvotes, A.answered_at, (select U.userid from User U where U.userid = A.userid) as userid,  (select U.username from User U where U.userid = A.userid) as username from Answer A where A.question_id = {}".format(id) 
     cur.execute(answer_query)
-    answerDetail = cur.fetchall()
-    #print(answerDetail)
-    return render_template('question.html', question=questionDetail, answers=answerDetail, qid=id, form=form)
+    answers = cur.fetchall()
+    page, per_page, offset = get_page_args(page_parameter='page',
+                                           per_page_parameter='per_page')
+    tag_query = "select Tagname from Tagged where question_id= {} limit 6;".format(id)   
+    cur.execute(tag_query)
+    tags = cur.fetchall()                                    
+    per_page = 5
+    offset = (page - 1) * per_page
+#     print(page, per_page, offset)
+    total = len(answers)                                       
+    pagination_answers = get_answers(answers, offset=offset, per_page=per_page)
+    pagination = Pagination(page=page, per_page=per_page, total=total,
+                            css_framework='bootstrap4')
+    return render_template('question.html', question=questionDetail, answers=pagination_answers, qid=id, form=form,
+                page=page, per_page=per_page, pagination=pagination, tags=tags)
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -186,8 +224,19 @@ def users():
     cur.execute("select username, reputation, userid, user_since from User")
     users = cur.fetchall()
     cur.execute("commit;")
-    user_list = convert_to_four_column_bootstrap_renderable_list(users)
-    return render_template('users.html', user_list=user_list)
+    page, per_page, offset = get_page_args(page_parameter='page',
+                                           per_page_parameter='per_page')
+    per_page = 100
+    offset = (page - 1) * per_page
+#     print(page, per_page, offset)
+    total = len(users)                                       
+    pagination_users = get_users(users, offset=offset, per_page=per_page)
+    pagination = Pagination(page=page, per_page=per_page, total=total,
+                            css_framework='bootstrap4')    
+    user_list = convert_to_four_column_bootstrap_renderable_list(pagination_users)                                           
+    return render_template('users.html', user_list=user_list, page=page,
+                        per_page=per_page, pagination=pagination)
+
 
 @app.route('/user_search', methods=['POST'])
 def user_search():
@@ -200,7 +249,7 @@ def user_search():
         users = cur.fetchall()
         cur.execute("commit;")
         user_list = convert_to_four_column_bootstrap_renderable_list(users)
-        return render_template('user_search.html', user_list=user_list, query=query)
+        return render_template('user_search.html', user_list=user_list, query=request.form['search'])
 
 @app.route('/tag/<string:tagname>')
 def tag(tagname):
@@ -221,9 +270,19 @@ def tags():
     cur.execute("start transaction read only;")
     cur.execute("select tagname, question_count, description from Tag")
     tags = cur.fetchall()
-    tag_list = convert_to_four_column_bootstrap_renderable_list(tags)
     cur.execute("commit;")
-    return render_template('tags.html', tag_list=tag_list)
+    page, per_page, offset = get_page_args(page_parameter='page',
+                                           per_page_parameter='per_page')
+    per_page = 100
+    offset = (page - 1) * per_page
+#     print(page, per_page, offset)
+    total = len(tags)                                       
+    pagination_tags = get_users(tags, offset=offset, per_page=per_page)
+    pagination = Pagination(page=page, per_page=per_page, total=total,
+                            css_framework='bootstrap4')    
+    tag_list = convert_to_four_column_bootstrap_renderable_list(pagination_tags)                                           
+    return render_template('tags.html', tag_list=tag_list, page=page,
+                        per_page=per_page, pagination=pagination)
 
 @app.route('/tag_search', methods=['POST'])
 def tag_search():

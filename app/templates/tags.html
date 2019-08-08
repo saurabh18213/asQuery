@@ -29,6 +29,7 @@
             </form>
         </div>
         <br><br>
+        {{ pagination.links }}
         {% for tags in tag_list %}
         <div class="row">
             {% for tag in tags %}
@@ -40,6 +41,7 @@
             {% endfor %}
         </div>
         {% endfor %}
+        {{ pagination.links }}
     </div>
   </div>
   

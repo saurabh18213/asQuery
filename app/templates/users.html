@@ -25,6 +25,7 @@
         </form>
     </div>
     <br><br>
+    {{ pagination.links }}
     {% for users in user_list %}
     <div class="row">
       {% for user in users %}
@@ -40,6 +41,7 @@
       {% endfor %}
     </div>
     {% endfor %}
+    {{ pagination.links }}
   </div>
 </div>
 
