@@ -44,7 +44,7 @@
         </table>
       </div>
       <br><br>
-      
+      {{ pagination.links }}
       {% if questions %}
         {% for question in questions %}
         <div class="row question">
@@ -88,7 +88,7 @@
         {% endfor %}
       {% endif %}
 
-  
+      {{ pagination.links }}
 </div>
     <button type="button" class="btn btn-default" name="Newest">Ask Question</button>
 

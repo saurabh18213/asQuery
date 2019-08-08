@@ -4,6 +4,7 @@ from flask_mysqldb import MySQL
 from app.forms import *
 from app.user import User, CreateUser
 from app.methods import convert_to_four_column_bootstrap_renderable_list
+from flask_paginate import Pagination, get_page_args
 import json
 
 app.config['MYSQL_USER'] = 'root'
@@ -13,6 +14,9 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['SECRET_KEY'] = 'you-will-never-guess'
 mysql = MySQL(app)
 
+def get_questions(questions, offset=0, per_page=50):
+        return questions[offset: offset + per_page]
+    
 @app.route('/')
 def index():
     cur = mysql.connection.cursor()
@@ -24,7 +28,17 @@ def index():
     as username from Question Q;''')
     questions = cur.fetchall()
     cur.execute("commit;")
-    return render_template('home.html', questions=questions)
+    page, per_page, offset = get_page_args(page_parameter='page',
+                                           per_page_parameter='per_page')
+    per_page = 50
+    offset = (page - 1) * per_page
+#     print(page, per_page, offset)
+    total = len(questions)                                       
+    pagination_questions = get_questions(questions, offset=offset, per_page=per_page)
+    pagination = Pagination(page=page, per_page=per_page, total=total,
+                            css_framework='bootstrap4')                       
+    return render_template('home.html', questions=pagination_questions, page=page,
+                        per_page=per_page, pagination=pagination)
 
 @app.route('/newest')
 def newest():
